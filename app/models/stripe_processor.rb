@@ -1,0 +1,2 @@
+class StripeProcessor < Processor
+end

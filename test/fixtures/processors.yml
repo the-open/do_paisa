@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  type: 
+  name: MyString
+  api_key: MyString
+  api_secret: MyString
+  currency: MyString
+  config: 
+
+two:
+  type: 
+  name: MyString
+  api_key: MyString
+  api_secret: MyString
+  currency: MyString
+  config: 
