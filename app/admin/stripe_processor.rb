@@ -1,8 +1,7 @@
 ActiveAdmin.register StripeProcessor do
-  menu parent: "Processors"
+  menu parent: 'Processors'
 
-  permit_params :name, :currency, :api_key,
-    :api_secret, :config
+  permit_params :name, :currency, :api_key, :api_secret, :config
 
   form do |f|
     f.inputs do
