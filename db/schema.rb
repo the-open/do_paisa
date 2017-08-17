@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(version: 20170817091619) do
   create_table "transactions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "processor_id"
     t.string "external_id"
-    t.text "data"
+    t.json "data"
     t.bigint "amount"
     t.string "status"
     t.datetime "created_at", null: false
