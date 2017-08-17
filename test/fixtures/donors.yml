@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  processor_id: 
+  external_id: MyString
+  token: MyString
+
+two:
+  processor_id: 
+  external_id: MyString
+  token: MyString
