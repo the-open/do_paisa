@@ -13,4 +13,17 @@ ActiveAdmin.register StripeProcessor do
     end
     f.actions
   end
+
+  show do
+    attributes_table do
+      row :name
+      row :id
+      row :currency
+      row :api_key
+      row :config
+      row :created_at
+      row :updated_at
+    end
+    active_admin_comments
+  end
 end
