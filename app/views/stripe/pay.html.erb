@@ -1,27 +1,42 @@
 <html>
   <head>
     <script src="https://js.stripe.com/v3/"></script>
+    <style>
+      body {
+        margin: 0;
+      }
+      .field {
+        display: block;
+        padding: .5rem .75rem;
+        font-size: 1rem;
+        line-height: 1.25;
+        color: #495057;
+        background-color: #fff;
+        background-image: none;
+        background-clip: padding-box;
+        border: 1px solid rgba(0,0,0,.15);
+        border-radius: .25rem;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      }
+    </style>
   </head>
   <body>
     <form id="payment-form">
       <div class="form-row">
-        <label for="card-element">
-          Credit or debit card
-        </label>
-        <div id="card-element">
+        <div id="card-element" class="field">
         </div>
         <div id="card-errors" role="alert"></div>
       </div>
-      <button>Submit Payment</button>
     </form>
 
     <script>
-      function saveTokenAndChargeCard(token) {
+      function saveTokenAndChargeCard(token, donationAmount, metadata) {
         var url = '<%= pay_url(@processor) %>';
         var data = JSON.stringify({
           token: token.id,
-          metadata: window.parent.metadata,
-          amount: window.parent.donationAmount
+          metadata: metadata,
+          amount: donationAmount
         });
 
         var request = new XMLHttpRequest();
@@ -31,7 +46,11 @@
         request.onload = function() {
           if (request.status === 200) {
             console.log(request.responseText);
-            window.parent.donationProcessed(request.responseText);
+            data = {
+              action: "donationProcessed",
+              response: request.responseText
+            };
+            parent.postMessage(data, "*");
           } else {
             console.log('error');
           }
@@ -48,11 +67,10 @@
       var elements = stripe.elements();
       var style = {
         base: {
-          color: '#32325d',
-          lineHeight: '24px',
-          fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+          color: '#495057',
+          lineHeight: '1.25',
           fontSmoothing: 'antialiased',
-          fontSize: '16px',
+          fontSize: '1rem',
           '::placeholder': {
             color: '#aab7c4'
           }
@@ -76,19 +94,23 @@
         }
       });
 
-      var form = document.getElementById('payment-form');
-      form.addEventListener('submit', function(event) {
-        event.preventDefault();
-
+      function submitCard(donationAmount, metadata) {
         stripe.createToken(card).then(function(result) {
           if (result.error) {
             var errorElement = document.getElementById('card-errors');
             errorElement.textContent = result.error.message;
           } else {
-            saveTokenAndChargeCard(result.token);
+            saveTokenAndChargeCard(result.token, donationAmount, metadata);
           }
         });
-      });
+      }
+
+      window.addEventListener("message", function(event) {
+        var data = event.data;
+        if (data.action === "submit") {
+          submitCard(data.donationAmount, data.metadata);
+        }
+      }, false);
     </script>
   </body>
 </html>
