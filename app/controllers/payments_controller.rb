@@ -1,5 +1,6 @@
 class PaymentsController < ApiController
   def pay
+    response.headers.delete "X-Frame-Options"
     @processor = Processor.where(id: params['id']).take!
     if request.post?
       process_params = {
