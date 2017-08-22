@@ -32,7 +32,7 @@
 
     <script>
       function saveTokenAndChargeCard(token, donationAmount, metadata) {
-        var url = '<%= pay_url(@processor) %>';
+        var url = '<%= "#{pay_url(@processor)}?key=#{@api_user.key}" %>';
         var data = JSON.stringify({
           token: token.id,
           metadata: metadata,
@@ -72,7 +72,7 @@
           fontSmoothing: 'antialiased',
           fontSize: '1rem',
           '::placeholder': {
-            color: '#aab7c4'
+            color: '#868ea9'
           }
         },
         invalid: {
