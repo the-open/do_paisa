@@ -1,3 +1,3 @@
 ActiveAdmin.register Transaction do
-  actions :index
+  actions :index, :show
 end
