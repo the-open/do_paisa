@@ -20,18 +20,50 @@ class StripeProcessor < Processor
       amount: charge.amount,
       external_id: charge.id,
       status: charge.status,
-      data: charge.to_json
+      data: charge.to_json,
+      donor: donor
     )
+
+    if recurring_donor?(options, transaction)
+      recurring_donor = add_recurring_donor(donor, charge.amount)
+      options[:recurring_donor_id] = recurring_donor.id
+    end
+
+    if options[:recurring_donor_id]
+      transaction.update_attributes(
+        recurring_donor_id: options[:recurring_donor_id],
+        recurring: true
+      )
+    end
 
     {
       transaction_id: transaction.id,
       status: transaction.status,
       amount: transaction.amount,
-      donor_id: donor.id
+      donor_id: donor.id,
+      recurring: transaction.recurring
     }
   end
 
-  def add_donor(token, metadata)
+  private
+
+  def recurring_donor?(options, transaction)
+    options[:recurring] &&
+      options[:recurring_donor_id].nil? &&
+      transaction.status.eql?('succeeded')
+  end
+
+  def add_recurring_donor(donor, amount)
+    RecurringDonor.create!(
+      donor: donor,
+      processor: self,
+      amount: amount,
+      last_charged_at: Date.today,
+      next_charge_at: Date.today + 1.month
+    )
+  end
+
+  def add_donor(token, metadata = {})
     metadata = metadata.permit!.to_hash
     customer_params = {
       source: token,
@@ -52,4 +84,5 @@ class StripeProcessor < Processor
 
     donor
   end
+
 end

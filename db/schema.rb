@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170822061109) do
+ActiveRecord::Schema.define(version: 20170823103242) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -59,6 +59,16 @@ ActiveRecord::Schema.define(version: 20170822061109) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "recurring_donors", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "donor_id"
+    t.bigint "amount"
+    t.date "last_charged_at"
+    t.date "next_charge_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "processor_id"
+  end
+
   create_table "transactions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "processor_id"
     t.string "external_id"
@@ -67,6 +77,8 @@ ActiveRecord::Schema.define(version: 20170822061109) do
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "recurring_donor_id"
+    t.boolean "recurring"
     t.uuid "donor_id"
   end
 
