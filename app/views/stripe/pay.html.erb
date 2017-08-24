@@ -31,12 +31,13 @@
     </form>
 
     <script>
-      function saveTokenAndChargeCard(token, donationAmount, metadata) {
+      function saveTokenAndChargeCard(token, donationAmount, metadata, recurring) {
         var url = '<%= "#{pay_url(@processor)}?key=#{@api_user.key}" %>';
         var data = JSON.stringify({
           token: token.id,
           metadata: metadata,
-          amount: donationAmount
+          amount: donationAmount,
+          recurring: recurring
         });
 
         var request = new XMLHttpRequest();
@@ -94,13 +95,13 @@
         }
       });
 
-      function submitCard(donationAmount, metadata) {
+      function submitCard(donationAmount, metadata, recurring) {
         stripe.createToken(card).then(function(result) {
           if (result.error) {
             var errorElement = document.getElementById('card-errors');
             errorElement.textContent = result.error.message;
           } else {
-            saveTokenAndChargeCard(result.token, donationAmount, metadata);
+            saveTokenAndChargeCard(result.token, donationAmount, metadata, recurring);
           }
         });
       }
@@ -108,7 +109,7 @@
       window.addEventListener("message", function(event) {
         var data = event.data;
         if (data.action === "submit") {
-          submitCard(data.donationAmount, data.metadata);
+          submitCard(data.donationAmount, data.metadata, data.recurring);
         }
       }, false);
     </script>
