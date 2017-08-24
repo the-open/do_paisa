@@ -53,16 +53,6 @@ class StripeProcessor < Processor
       transaction.status.eql?('succeeded')
   end
 
-  def add_recurring_donor(donor, amount)
-    RecurringDonor.create!(
-      donor: donor,
-      processor: self,
-      amount: amount,
-      last_charged_at: Date.today,
-      next_charge_at: Date.today + 1.month
-    )
-  end
-
   def add_donor(token, metadata = {})
     metadata = metadata.permit!.to_hash
     customer_params = {
