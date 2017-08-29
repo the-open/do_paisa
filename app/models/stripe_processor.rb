@@ -45,6 +45,10 @@ class StripeProcessor < Processor
     }
   end
 
+  def process_webhook(params)
+    puts params.inspect
+  end
+
   private
 
   def recurring_donor?(options, transaction)
