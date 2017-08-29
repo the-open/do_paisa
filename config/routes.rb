@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
 
+  # Auth0
+  get '/auth/auth0/callback' => 'auth0#callback'
+  get '/auth/failure'        => 'auth0#failure'
+
   # webhooks
   match '/webhooks/:id', to: 'webhook#process_webhook', via: :post, as: 'webhook'
 
@@ -8,5 +12,6 @@ Rails.application.routes.draw do
 
   # admin
   ActiveAdmin.routes(self)
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  match '/admin/login', to: 'auth0#login', via: :get
+  match '/admin/logout', to: 'auth0#logout', via: :get
 end

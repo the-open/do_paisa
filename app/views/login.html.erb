@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <title>Login</title>
+  </head>
+  <body>
+    <div id="root" style="width: 320px; margin: 40px auto; padding: 10px; border-style: dashed; border-width: 1px; box-sizing: border-box;">
+    </div>
+    <script src="https://cdn.auth0.com/js/lock/10.2/lock.min.js"></script>
+    <script>
+      var lock = new Auth0Lock(
+        '<%= Rails.application.secrets.auth0_client_id %>',
+        '<%= Rails.application.secrets.auth0_domain %>', {
+          container: 'root',
+          auth: {
+            redirectUrl: '<%= request.base_url %>/auth/auth0/callback',
+            responseType: 'code',
+            params: {
+              state: '<%= session['omniauth.state'] %>',
+              scope: 'openid email' // Learn about scopes: https://auth0.com/docs/scopes
+            }
+          }
+        });
+      lock.show();
+    </script>
+  </body>
+</html>

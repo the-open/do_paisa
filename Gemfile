@@ -27,10 +27,15 @@ gem 'jbuilder', '~> 2.5'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+# Auth
+gem 'omniauth', '~> 1.6.1'
+gem 'omniauth-auth0', '~> 2.0.0'
+
 gem 'activeadmin'
 gem 'stripe'
 
 group :development, :test do
+  gem 'dotenv-rails', require: 'dotenv/rails-now'
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 end
 
