@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  processor_id: 
+  url: MyString
+  type: 
+
+two:
+  name: MyString
+  processor_id: 
+  url: MyString
+  type: 

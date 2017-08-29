@@ -4,4 +4,13 @@ class Transaction < ApplicationRecord
   belongs_to :donor
 
   validates_presence_of :amount, :external_id, :status, :processor_id
+
+  after_save :notify_webhooks
+
+  def notify_webhooks
+    webhooks = OutgoingWebhook.where(processor_id: processor_id).or(OutgoingWebhook.where(processor_id: nil))
+    webhooks.each do |webhook|
+      webhook.notify(self)
+    end
+  end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170823103242) do
+ActiveRecord::Schema.define(version: 20170829074011) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -80,6 +80,15 @@ ActiveRecord::Schema.define(version: 20170823103242) do
     t.uuid "recurring_donor_id"
     t.boolean "recurring"
     t.uuid "donor_id"
+  end
+
+  create_table "webhooks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.uuid "processor_id"
+    t.string "url"
+    t.string "type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end
