@@ -17,9 +17,9 @@ DoPaisa's name originates from India, where it was ideated, and built. Do means 
 
 # Contributing:
 
-DoPaisa is an open source project and we encourage contributions.
+DoPaisa is an open source project and we encourage contributions. We feel that a welcoming community is important and we ask that you follow our [Code Of Conduct](https://github.com/the-open/do_paisa/blob/master/CODE_OF_CONDUCT.md) in all interactions with the community.
 
-In the spirit of open source software, **everyone** is encourages to help improve this project.
+In the spirit of open source software, **everyone** is encouraged to help improve this project.
 
 Here are some ways **you** can contribute: 
 
@@ -27,8 +27,7 @@ Here are some ways **you** can contribute:
 * by adding a new feature
 * by adding support for a new payment processor 
 * by reviewing pull requests
-* by writing or edition documentation
-
+* by writing or editing documentation
 
 If you would like to add a new feature or a new payment processor, please create a new issue, and let us know what you're working on.
 
