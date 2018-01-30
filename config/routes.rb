@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
   # payments
   match '/payments/:id/pay', to: 'payments#pay', via: %i[get post], as: 'pay'
+  match '/processors/:id/example', to: 'processor#example', via: :get, as: 'example'
 
   # admin
   ActiveAdmin.routes(self)

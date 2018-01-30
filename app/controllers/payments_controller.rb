@@ -1,5 +1,6 @@
 class PaymentsController < ApiController
   before_action :api_key
+  
   def pay
     allowed_origin_uri = URI(@api_user.allowed_origin)
     allowed_host = "#{allowed_origin_uri.host}:#{allowed_origin_uri.port}"
@@ -22,7 +23,7 @@ class PaymentsController < ApiController
       render "/#{processor_type}/pay", layout: false
     end
   end
-
+  
   private
 
   def api_key

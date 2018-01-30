@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Donate to us | The People's Org</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+
+    <style>
+      body .content .container,
+      body .content #disclaimer {
+        margin-top: 50px;
+      }
+      .fat-text {
+        font-weight: 700;
+      }
+      .large-text {
+        font-size: 1.4em;
+      }
+      .dark {
+        background: rgb(52, 58, 64);
+        color: rgb(255, 255, 255);
+      }
+      p.donation-amount {
+        cursor: pointer;
+      }
+      button {
+        cursor: pointer;
+      }
+      p.input-label {
+        font-weight: 600;
+      }
+      #footer {
+        height: 150px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-md navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="/">The People's Org</a>
+        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Campaigns</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">News</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Donate</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">About Us</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="content">
+      <div class="container">
+        <!-- Donate boxes -->
+        <div class="row">
+          <div class="col help-text">
+            <h2 class="fat-text">Can you chip in?</h2>
+            <p class="large-text text-justify">Thousands of us from across the world have already chipped in to help fund the staff, the tech and website. Will you chip in to make sure we can move fast to win the campaigns that matter to all of us? You can make a secure donation here!</p>
+            <img src="image.png" class="img-fluid">
+          </div>
+          <div class="col">
+            <div class="donate-box border border-dark rounded">
+              <div class="donation-amount-form">
+                <h2 class="fat-text dark text-center p-3" id="donation-header">I'm donating $<span id="donation-amount">0</span></h2>
+                <div class="donation-amounts">
+                  <p class="fat-text large-text pl-3">Choose your donation amount</p>
+                  <div class="row ml-1 mr-1">
+                    <div class="col">
+                      <p class="p-2 rounded dark text-center donation-amount" data-donation-amount="5">$5</p>
+                    </div>
+                    <div class="col">
+                      <p class="p-2 rounded dark text-center donation-amount" data-donation-amount="10">$10</p>
+                    </div>
+                    <div class="col">
+                      <p class="p-2 rounded dark text-center donation-amount" data-donation-amount="15">$15</p>
+                    </div>
+                  </div>
+                  <div class="row ml-1 mr-1">
+                    <div class="col">
+                      <p class="p-2 rounded dark text-center donation-amount" data-donation-amount="20">$20</p>
+                    </div>
+                    <div class="col">
+                      <p class="p-2 rounded dark text-center donation-amount" data-donation-amount="50">$50</p>
+                    </div>
+                    <div class="col">
+                      <p class="p-2 rounded dark text-center donation-amount" data-donation-amount="100">$100</p>
+                    </div>
+                  </div>
+                  <div class="row ml-1 mr-1 pl-3">
+                    <label class="form-check-label">
+                      <input type="checkbox" class="form-check-input" id="recurring">
+                      Make it monthly?
+                    </label>
+                  </div>
+                  <div class="pay-button text-center mb-3">
+                    <button type="button" id="pay-with-card-button" class="btn btn-dark m-auto pl-4 pr-4 pt-2 pb-2">Pay With Card</button>
+                  </div>
+                </div>
+
+                <div class="card-details ml-3">
+                  <p class="fat-text large-text">Thanks, we just need a few more details</p>
+                  <div class="row">
+                    <div class="col">
+                      <p class="input-label">Your Full Name</p>
+                    </div>
+                    <div class="col-8">
+                      <input type="text" class="form-control metadata" placeholder="John Doe" id="name">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <p class="input-label">Your Email</p>
+                    </div>
+                    <div class="col-8">
+                      <input type="email" class="form-control metadata" placeholder="email@example.org" id="email">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <p class="input-label">Credit Card Details</p>
+                    </div>
+                    <iframe src="/payments/<%= @processor.id %>/pay?key=<%= @api_key %>" class="col-8 credit-card" frameBorder="0" scrolling="no" height="80">
+                    </iframe>
+                  </div>
+                  <div class="pay-button text-center mb-3">
+                    <button type="button" id="pay-button" class="btn btn-dark m-auto pl-5 pr-5 pt-2 pb-2" data-loading-text="Processing...">Pay</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="disclaimer">
+            <p>We want to be transparent and accountable about how we spend your donations - for more information please see our Donation Policy.</p>
+            <p>Your personal information will be kept private and held securely. By submitting information you are agreeing to The People's Org keeping you informed about campaigns and agree to the use of cookies in accordance with our privacy policy. </p>
+          </div>
+        </div>
+      </div>
+
+
+      <footer id="footer" class="dark">
+        <div class="container">
+        </div>
+      </footer>
+
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+
+      <script>
+        $(function() {
+          $(".card-details").hide();
+
+          $("#pay-with-card-button").click(function() {
+            $(".card-details").show();
+            $(".donation-amounts").hide();
+          });
+
+          $("p.donation-amount").click(function() {
+            var donationAmountText = $(this).data("donation-amount");
+            window.donationAmount = donationAmountText * 100;
+            $("span#donation-amount").text(donationAmountText);
+          });
+
+          $("#pay-button").click(function() {
+            var iframeWindow = $("iframe.credit-card")[0].contentWindow;
+            var metadata = {
+              name: $("input#name").val(),
+              email: $("input#email").val()
+            };
+            var data = {
+              action: "submit",
+              donationAmount: window.donationAmount,
+              metadata: metadata,
+              recurring: $("#recurring").is(":checked")
+            };
+            console.log("Submitting from parent window")
+            iframeWindow.postMessage(data, "*");
+          });
+
+          window.addEventListener("message", function(event) {
+            var data = event.data;
+            if (data.action === "donationProcessed") {
+              var response = JSON.parse(data.response);
+              console.log(response);
+              alert("Thank you for your donation, your transaction id is: " + response.transaction_id);
+            }
+          }, false);
+        });
+      </script>
+  </body>
+</html>
