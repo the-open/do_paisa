@@ -33,6 +33,7 @@ gem 'omniauth-auth0', '~> 2.0.0'
 
 gem 'activeadmin'
 gem 'stripe'
+gem 'beanstream' # bambora official Ruby client
 
 group :development, :test do
   gem 'dotenv-rails', require: 'dotenv/rails-now'
