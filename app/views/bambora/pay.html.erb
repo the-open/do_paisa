@@ -1,0 +1,180 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <script src='https://libs.na.bambora.com/customcheckout/1/customcheckout.js'></script>
+  </head>
+  <body>
+    <form id="checkout-form" height="40px">
+      <div class="form-row">
+        <div id="card-number"></div>
+      </div>
+      <div class="form-row">
+        <div id="card-number-errors" role="alert"></div>
+      </div>
+      <div class="form-row">
+        <div id="card-cvv"></div>
+      </div>
+      <div class="form-row">
+        <div id="card-cvv-errors" role="alert"></div>
+      </div>
+      <div class="form-row">
+        <div id="card-expiry"></div>
+      </div>
+      <div class="form-row">
+        <div id="card-expiry-errors" role="alert"></div>
+      </div>
+      <div id="feedback"></div>
+    </form>
+
+    <script>
+      (function() {
+        var customCheckout = customcheckout();
+        
+        var isCardNumberComplete = false;
+        var isCVVComplete = false;
+        var isExpiryComplete = false;
+        
+        var customCheckoutController = {
+          init: function() {
+            console.log('checkout.init()');
+            this.createInputs();
+            this.addListeners();
+          },
+          createInputs: function() {
+            console.log('checkout.createInputs()');
+            var options = {
+            };
+
+            options.placeholder = 'Card number';
+            customCheckout.create('card-number', options).mount('#card-number');
+
+            options.placeholder = 'CVV';
+            customCheckout.create('cvv', options).mount('#card-cvv');
+
+            options.placeholder = 'MM / YY';
+            customCheckout.create('expiry', options).mount('#card-expiry');
+            
+          },
+          
+          addListeners: function() {
+            
+            var self = this;
+            
+            window.addEventListener("message", function(event) {
+              var data = event.data;
+              if (data.action === "submit") {
+                console.log(data.donationAmount, data.metadata, data.recurring)
+                self.onSubmit()
+              }
+            }, false);
+            
+            customCheckout.on('focus', function(event) {
+              if (document.getElementById(event.field+'-errors')) {
+                document.getElementById(event.field+'-errors').textContent = '';
+              }
+            });
+            
+            customCheckout.on('error', function(event) {
+              if (event.field === 'card-number') {
+                isCardNumberComplete = false;
+                document.getElementById(event.field+'-errors').textContent = event.message;
+              } else if (event.field === 'cvv') {
+                isCVVComplete = false;
+                document.getElementById(event.field+'-errors').textContent = event.message;
+              } else if (event.field === 'expiry') {
+                isExpiryComplete = false;
+                document.getElementById(event.field+'-errors').textContent = event.message;
+              }
+            });
+            
+            customCheckout.on('complete', function(event) {
+              
+              if (event.field === 'card-number') {
+                isCardNumberComplete = true;
+              } else if (event.field === 'cvv') {
+                isCVVComplete = true;
+              } else if (event.field === 'expiry') {
+                isExpiryComplete = true;
+              }
+              
+              self.setPayButton();
+            });
+            
+          },
+          onSubmit: function(event) {
+            var self = this;
+            var payButton = parent.document.getElementById('pay-button');
+            
+            console.log('checkout.onSubmit()');
+
+            payButton.disabled = true;
+            payButton.className = 'btn btn-dark disabled m-auto pl-5 pr-5 pt-2 pb-2';
+            self.toggleProcessingScreen();
+
+            var callback = function(result) {
+              console.log('token result : ' + JSON.stringify(result));
+
+              if (result.error) {
+                self.processTokenError(result.error);
+              } else {
+                self.processTokenSuccess(result.token);
+              }
+            };
+
+            console.log('checkout.createToken()');
+            customCheckout.createToken(callback);
+          },
+          setPayButton: function() {
+
+            var payButton = parent.document.getElementById('pay-button');
+            
+            if (isCardNumberComplete && isCVVComplete && isExpiryComplete) {
+              payButton.disabled = false;
+              payButton.className = 'btn btn-dark m-auto pl-5 pr-5 pt-2 pb-2';
+            } else {
+              payButton.disabled = true;
+              payButton.className = 'btn btn-dark disabled m-auto pl-5 pr-5 pt-2 pb-2';
+            }
+          },
+          toggleProcessingScreen: function() {
+            var processingScreen = document.getElementById('processing-screen');
+            if (processingScreen) {
+              processingScreen.classList.toggle('visible');
+            }
+          },
+          showErrorFeedback: function(message) {
+            var xMark = '\u2718';
+            this.feedback = document.getElementById('feedback');
+            this.feedback.innerHTML = xMark + ' ' + message;
+            this.feedback.classList.add('error');
+          },
+          showSuccessFeedback: function(message) {
+            var checkMark = '\u2714';
+            this.feedback = document.getElementById('feedback');
+            this.feedback.innerHTML = checkMark + ' ' + message;
+            this.feedback.classList.add('success');
+          },
+          processTokenError: function(error) {
+            error = JSON.stringify(error, undefined, 2);
+            console.log('processTokenError: ' + error);
+
+            this.showErrorFeedback(
+              'Error creating token: </br>' + JSON.stringify(error, null, 4)
+            );
+            this.toggleProcessingScreen();
+          },
+          processTokenSuccess: function(token) {
+            console.log('processTokenSuccess: ' + token);
+
+            this.showSuccessFeedback('Success! Created token: ' + token);
+            this.toggleProcessingScreen();
+
+          },
+        };
+
+        customCheckoutController.init();
+      })();
+      
+    </script>
+  </body>
+</html>
