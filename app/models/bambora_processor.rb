@@ -10,8 +10,7 @@ class BamboraProcessor < Processor
     gateway = ActiveMerchant::Billing::BeanstreamGateway.new(
      :login => api_key,
      :user => config_data['user'],
-     :password => config_data['password'],
-     :secure_profile_api_key => api_secret
+     :password => config_data['password']
     )
 
     response = gateway.purchase(options[:amount], donor.external_id)
