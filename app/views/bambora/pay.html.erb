@@ -2,23 +2,34 @@
   <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
     <script src='https://libs.na.bambora.com/customcheckout/1/customcheckout.js'></script>
+    <style>
+      .bambora-checkoutfield {
+        margin-left: 5px;
+        width: 97%;
+        height: 2.5em;
+        border-radius: 4px;
+        border: 1px solid rgba(0,0,0,.15);
+        line-height: 0;
+        margin-bottom: 3px;
+      }
+    </style>
   </head>
   <body>
     <form id="checkout-form" height="40px">
       <div class="form-row">
-        <div id="card-number"></div>
+        <div class="input" id="card-number"></div>
       </div>
       <div class="form-row">
         <div id="card-number-errors" role="alert"></div>
       </div>
       <div class="form-row">
-        <div id="card-cvv"></div>
+        <div class="input" id="card-cvv"></div>
       </div>
       <div class="form-row">
-        <div id="card-cvv-errors" role="alert"></div>
+        <div class="input" id="card-cvv-errors" role="alert"></div>
       </div>
       <div class="form-row">
-        <div id="card-expiry"></div>
+        <div class="input" id="card-expiry"></div>
       </div>
       <div class="form-row">
         <div id="card-expiry-errors" role="alert"></div>
@@ -27,6 +38,41 @@
     </form>
 
     <script>
+      function saveTokenAndChargeCard(token, donationAmount, metadata, recurring) {
+        var url = '<%= "#{pay_url(@processor)}?key=#{@api_user.key}" %>';
+        var data = JSON.stringify({
+          token: token,
+          metadata: metadata,
+          amount: donationAmount,
+          recurring: recurring
+        });
+
+        console.log(data)
+
+        var request = new XMLHttpRequest();
+        request.open('POST', url, true);
+        request.setRequestHeader('Content-Type', 'application/json');
+
+        request.onload = function() {
+          if (request.status === 200) {
+            console.log(request.responseText);
+            data = {
+              action: "donationProcessed",
+              response: request.responseText
+            };
+            parent.postMessage(data, "*");
+          } else {
+            console.log('error');
+          }
+        };
+
+        request.onerror = function() {
+          console.log('error 2');
+        }
+
+        request.send(data);
+      }
+    
       (function() {
         var customCheckout = customcheckout();
         
@@ -64,7 +110,7 @@
               var data = event.data;
               if (data.action === "submit") {
                 console.log(data.donationAmount, data.metadata, data.recurring)
-                self.onSubmit()
+                self.onSubmit(data.donationAmount, data.metadata, data.recurring)
               }
             }, false);
             
@@ -101,7 +147,7 @@
             });
             
           },
-          onSubmit: function(event) {
+          onSubmit: function(donationAmount, metadata, recurring) {
             var self = this;
             var payButton = parent.document.getElementById('pay-button');
             
@@ -118,6 +164,7 @@
                 self.processTokenError(result.error);
               } else {
                 self.processTokenSuccess(result.token);
+                saveTokenAndChargeCard(result.token, donationAmount, metadata, recurring);
               }
             };
 

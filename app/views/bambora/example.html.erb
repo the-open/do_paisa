@@ -134,6 +134,68 @@
                   </div>
                   <div class="row">
                     <div class="col">
+                      <p class="input-label">Phone</p>
+                    </div>
+                    <div class="col-8">
+                      <input type="tel" class="form-control metadata" placeholder="1-883-226-2672" id="telephone">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <p class="input-label">Address</p>
+                    </div>
+                    <div class="col-8">
+                      <input type="text" class="form-control metadata" placeholder="698 Seymour St" id="address-1">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <p class="input-label">Address</p>
+                    </div>
+                    <div class="col-8">
+                      <input type="text" class="form-control metadata" placeholder="Unit 308" id="address-2">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <p class="input-label">City</p>
+                    </div>
+                    <div class="col-8">
+                      <input type="text" class="form-control metadata" placeholder="Vancouver" id="city">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <p class="input-label">Province</p>
+                    </div>
+                    <div class="col-8">
+                      <select class="form-control metadata" id="province">
+                        <option value="AB">Alberta</option>
+                        <option value="BC">British Columbia</option>
+                        <option value="MB">Manitoba</option>
+                        <option value="NB">New Brunswick</option>
+                        <option value="NL">Newfoundland and Labrador</option>
+                        <option value="NS">Nova Scotia</option>
+                        <option value="ON">Ontario</option>
+                        <option value="PE">Prince Edward Island</option>
+                        <option value="QC">Quebec</option>
+                        <option value="SK">Saskatchewan</option>
+                        <option value="NT">Northwest Territories</option>
+                        <option value="NU">Nunavut</option>
+                        <option value="YT">Yukon</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <p class="input-label">Postal Code</p>
+                    </div>
+                    <div class="col-8">
+                      <input type="text" class="form-control metadata" placeholder="V6B 3K3" id="postcode">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
                       <p class="input-label">Credit Card Details</p>
                     </div>
                     <iframe src="/payments/<%= @processor.id %>/pay?key=<%= @api_key %>" class="col-8 credit-card" frameBorder="0" scrolling="no" height="200">
@@ -142,7 +204,6 @@
                   <div class="pay-button text-center mb-3">
                     <button id="pay-button" type="submit" class="btn btn-dark m-auto pl-5 pr-5 pt-2 pb-2" disabled=true>Pay</button>
                   </div>
-                  <div id="feedback"></div>
                 </div>
               </div>
             </div>
@@ -183,8 +244,16 @@
             var iframeWindow = $("iframe.credit-card")[0].contentWindow;
             var metadata = {
               name: $("input#name").val(),
-              email: $("input#email").val()
+              email: $("input#email").val(),
+              phone: $("input#telephone").val(),
+              address1: $("input#address-1").val(),
+              address2: $("input#address-2").val(),
+              city: $("input#city").val(),
+              province: $("select#province").val(),
+              postal_code: $("input#postcode").val(),
+              country: "CA"      
             };
+            console.log(metadata)
             var data = {
               action: "submit",
               donationAmount: window.donationAmount,
