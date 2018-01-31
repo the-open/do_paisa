@@ -147,8 +147,10 @@
             });
             
             customCheckout.on('complete', function(event) {
-              document.getElementById(event.field + '-feedback-message')
-                .innerHTML = '';
+              if(document.getElementById(event.field + '-feedback-message')) {
+                document.getElementById(event.field + '-feedback-message')
+                  .innerHTML = '';
+              }
               
               if (event.field === 'card-number') {
                 isCardNumberComplete = true;
