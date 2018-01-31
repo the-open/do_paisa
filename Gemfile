@@ -35,6 +35,8 @@ gem 'activeadmin'
 gem 'stripe'
 gem 'activemerchant'
 
+gem 'newrelic_rpm'
+
 group :development, :test do
   gem 'dotenv-rails', require: 'dotenv/rails-now'
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

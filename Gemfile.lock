@@ -131,6 +131,7 @@ GEM
     multi_json (1.12.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
+    newrelic_rpm (4.8.0.341)
     nio4r (2.1.0)
     nokogiri (1.8.0)
       mini_portile2 (~> 2.2.0)
@@ -254,6 +255,7 @@ DEPENDENCIES
   dotenv-rails
   jbuilder (~> 2.5)
   listen (>= 3.0.5, < 3.2)
+  newrelic_rpm
   omniauth (~> 1.6.1)
   omniauth-auth0 (~> 2.0.0)
   pg (~> 0.18)
