@@ -5,8 +5,12 @@ class BamboraProcessor < Processor
     donor = Donor.find_by(id: options[:token])
     donor = add_donor(options[:token], options[:metadata]) if donor.nil?
 
+    config_data = JSON.parse(config) if config
+
     gateway = ActiveMerchant::Billing::BeanstreamGateway.new(
      :login => api_key,
+     :user => config_data['user'],
+     :password => config_data['password'],
      :secure_profile_api_key => api_secret
     )
 
@@ -55,12 +59,8 @@ class BamboraProcessor < Processor
   end
 
   def add_donor(token, metadata = {})
-    # metadata = metadata.permit!.to_hash
-    customer_params = {
-      source: token,
-      email: metadata["email"],
-      metadata: metadata
-    }
+    # TODO use require here to ensure that all the metadata required is included
+    #metadata = metadata.permit!.to_hash
 
     gateway = ActiveMerchant::Billing::BeanstreamGateway.new(
      :login => api_key,
