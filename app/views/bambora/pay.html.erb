@@ -12,29 +12,40 @@
         line-height: 0;
         margin-bottom: 3px;
       }
+      .bambora-checkoutfield-focus {
+        border-color: #80bdff;
+      }
+      .bambora-checkoutfield-error {
+        border-color: rgba(224, 80, 67, 1) !important;
+      }
+      #checkout-form label {
+        color: rgba(224, 80, 67, 1) !important;
+        font-size: 0.7rem;
+        margin-left: 10;
+        margin-bottom: 0;
+      }
     </style>
   </head>
   <body>
     <form id="checkout-form" height="40px">
+      
       <div class="form-row">
         <div class="input" id="card-number"></div>
+        <label for="card-number" id="card-number-feedback-message"></label>
       </div>
-      <div class="form-row">
-        <div id="card-number-errors" role="alert"></div>
-      </div>
+      
       <div class="form-row">
         <div class="input" id="card-cvv"></div>
+        <label for="card-cvv" id="card-cvv-feedback-message"></label>
       </div>
-      <div class="form-row">
-        <div class="input" id="card-cvv-errors" role="alert"></div>
-      </div>
+      
       <div class="form-row">
         <div class="input" id="card-expiry"></div>
+        <label for="card-expiry" id="card-expiry-feedback-message"></label>
       </div>
-      <div class="form-row">
-        <div id="card-expiry-errors" role="alert"></div>
-      </div>
+      
       <div id="feedback"></div>
+      
     </form>
 
     <script>
@@ -88,7 +99,15 @@
           },
           createInputs: function() {
             console.log('checkout.createInputs()');
-            var options = {
+            
+            var options = {};
+            
+            options.style = {};
+            
+            options.style.base = {
+              padding: '10px 12px',
+              fontSize: '1rem',
+              color: 'rgba(73, 80, 87, 1)',
             };
 
             options.placeholder = 'Card number';
@@ -114,26 +133,22 @@
               }
             }, false);
             
-            customCheckout.on('focus', function(event) {
-              if (document.getElementById(event.field+'-errors')) {
-                document.getElementById(event.field+'-errors').textContent = '';
-              }
-            });
-            
             customCheckout.on('error', function(event) {
+              document.getElementById(event.field + '-feedback-message')
+                .innerHTML = event.message;
+                
               if (event.field === 'card-number') {
                 isCardNumberComplete = false;
-                document.getElementById(event.field+'-errors').textContent = event.message;
               } else if (event.field === 'cvv') {
                 isCVVComplete = false;
-                document.getElementById(event.field+'-errors').textContent = event.message;
               } else if (event.field === 'expiry') {
                 isExpiryComplete = false;
-                document.getElementById(event.field+'-errors').textContent = event.message;
               }
             });
             
             customCheckout.on('complete', function(event) {
+              document.getElementById(event.field + '-feedback-message')
+                .innerHTML = '';
               
               if (event.field === 'card-number') {
                 isCardNumberComplete = true;
