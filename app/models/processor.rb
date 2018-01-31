@@ -1,4 +1,6 @@
 class Processor < ApplicationRecord
+  has_many :donors
+  
   def add_recurring_donor(donor, amount)
     RecurringDonor.create!(
       donor: donor,
