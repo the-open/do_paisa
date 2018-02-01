@@ -1,23 +1,11 @@
+# frozen_string_literal: true
+
 class OutgoingWebhook < Webhook
+  include WebhookPayload
   belongs_to :processor, optional: true
 
   def notify(transaction)
-    body = {
-      processor: {
-        name: transaction.processor.name,
-        id: transaction.processor.id
-      },
-      transaction: {
-        id: transaction.id,
-        amount: transaction.amount,
-        status: transaction.status,
-        recurring: transaction.recurring?
-      },
-      donor: {
-        id: transaction.donor.id,
-        metadata: transaction.donor.metadata
-      }
-    }.to_json
+    body = get_webhook_payload(self, transaction).to_json
 
     connection = Faraday.new(url: url)
     connection.post do |request|

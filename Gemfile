@@ -32,14 +32,17 @@ gem 'omniauth', '~> 1.6.1'
 gem 'omniauth-auth0', '~> 2.0.0'
 
 gem 'activeadmin'
-gem 'stripe'
 gem 'activemerchant'
+gem 'stripe'
 
 gem 'newrelic_rpm'
 
 group :development, :test do
+  gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  gem 'database_cleaner'
   gem 'dotenv-rails', require: 'dotenv/rails-now'
-  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'factory_bot_rails'
+  gem 'rspec-rails'
 end
 
 group :development do

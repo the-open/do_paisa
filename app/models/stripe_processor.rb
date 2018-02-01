@@ -6,7 +6,7 @@ class StripeProcessor < Processor
     }
 
     donor = Donor.find_by(id: options[:token])
-    donor = add_donor(options[:token], options[:metadata]) if donor.nil?
+    donor = add_donor(options[:token], options[:metadata], options[:source]) if donor.nil?
 
     charge_params[:customer] = donor.external_id
 
@@ -21,7 +21,9 @@ class StripeProcessor < Processor
       external_id: charge.id,
       status: charge.status,
       data: charge.to_json,
-      donor: donor
+      donor: donor,
+      source_system: source[:system] || donor.source_system,
+      source_external_id: source[:external_id] || donor.source_external_id
     )
 
     if recurring_donor?(options, transaction)
@@ -57,11 +59,11 @@ class StripeProcessor < Processor
       transaction.status.eql?('succeeded')
   end
 
-  def add_donor(token, metadata = {})
+  def add_donor(token, metadata = {}, source)
     metadata = metadata.permit!.to_hash
     customer_params = {
       source: token,
-      email: metadata["email"],
+      email: metadata['email'],
       metadata: metadata
     }
     customer = Stripe::Customer.create(
@@ -73,10 +75,11 @@ class StripeProcessor < Processor
       processor_id: id,
       external_id: customer.id,
       data: customer.to_json,
-      metadata: metadata
+      metadata: metadata,
+      source_system: source['system'],
+      source_external_id: source['external_id']
     )
 
     donor
   end
-
 end

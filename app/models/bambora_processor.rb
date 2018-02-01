@@ -1,27 +1,30 @@
+# frozen_string_literal: true
+
 class BamboraProcessor < Processor
   def process(options)
-
     # TODO: Not sure if this is correct for Bambora? Token will be different every time
     donor = Donor.find_by(id: options[:token])
-    donor = add_donor(options[:token], options[:metadata]) if donor.nil?
+    donor = add_donor(options[:token], options[:metadata], options[:source]) if donor.nil?
 
     config_data = JSON.parse(config) if config
 
     gateway = ActiveMerchant::Billing::BeanstreamGateway.new(
-     :login => api_key,
-     :user => config_data['user'],
-     :password => config_data['password']
+      login: api_key,
+      user: config_data['user'],
+      password: config_data['password']
     )
 
     response = gateway.purchase(options[:amount], donor.external_id)
 
     transaction = Transaction.create!(
       processor_id: id,
-      amount: 100*response.params['trnAmount'].to_f,
+      amount: 100 * response.params['trnAmount'].to_f,
       external_id: response.params['trnId'],
       status: response.message,
       data: response.params.to_json,
-      donor: donor
+      donor: donor,
+      source_system: source[:system] || donor.source_system,
+      source_external_id: source[:external_id] || donor.source_external_id
     )
 
     if recurring_donor?(options, transaction)
@@ -57,57 +60,58 @@ class BamboraProcessor < Processor
       transaction.status.eql?('succeeded')
   end
 
-  def add_donor(token, metadata = {})
-    # TODO use require here to ensure that all the metadata required is included
-    #metadata = metadata.permit!.to_hash
+  def add_donor(token, metadata = {}, source)
+    # TODO: use require here to ensure that all the metadata required is included
+    # metadata = metadata.permit!.to_hash
 
     gateway = ActiveMerchant::Billing::BeanstreamGateway.new(
-     :login => api_key,
-     :secure_profile_api_key => api_secret
+      login: api_key,
+      secure_profile_api_key: api_secret
     )
 
     options = {
-      email: metadata["email"],
-      card_owner: metadata["name"],
+      email: metadata['email'],
+      card_owner: metadata['name'],
       billing_address: {
-        name: metadata["name"],
-        phone: metadata["phone"],
-        address1: metadata["address1"],
-        address2: metadata["address2"],
-        city: metadata["city"],
-        state: metadata["province"],
-        zip: metadata["postal_code"],
-        country: metadata["country"]
+        name: metadata['name'],
+        phone: metadata['phone'],
+        address1: metadata['address1'],
+        address2: metadata['address2'],
+        city: metadata['city'],
+        state: metadata['province'],
+        zip: metadata['postcode'],
+        country: metadata['country']
       }
     }
 
     response = gateway.store(token, options)
 
     p response
-    # 17 = This customer already exists    
+    # 17 = This customer already exists
     if response.params['responseCode'] == '17'
       customer_vault_id = response.params['matchedCustomerCode']
-    # 1 = Customer successfully created    
+    # 1 = Customer successfully created
     elsif response.params['responseCode'] == '1'
       customer_vault_id = response.params['customer_vault_id']
     else
       raise BamboraProcessorCustomerCreateError, response.message
     end
 
-    donor = Donor.find_or_create_by!(
+    donor = Donor.find_or_initialize_by!(
       processor_id: id,
-      external_id: customer_vault_id,
+      external_id: customer_vault_id
     )
 
-    donor.update_attributes(      
+    donor.update_attributes(
       data: response.params.to_json,
-      metadata: metadata
-      )
+      metadata: metadata,
+      source_system: source['system'],
+      source_external_id: source['external_id']
+    )
+    donor.save!
 
     donor
   end
 end
 
 class BamboraProcessorCustomerCreateError < StandardError; end
-
-
