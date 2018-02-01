@@ -12,7 +12,6 @@ class Transaction < ApplicationRecord
   end
 
   def notify_webhooks
-    raise
     webhooks = OutgoingWebhook.where(processor_id: processor_id).or(OutgoingWebhook.where(processor_id: nil))
     webhooks.each do |webhook|
       webhook.notify(self)
