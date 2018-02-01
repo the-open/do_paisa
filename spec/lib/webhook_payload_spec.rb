@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'rails_helper'
 include WebhookPayload
 
@@ -24,7 +22,7 @@ describe WebhookPayload do
       }
     )
 
-    Transaction.skip_callback(:save, :after, :notify_webhooks)
+    Transaction.any_instance.stub(:notify_webhooks)
     @transaction = Transaction.create!(
       processor: @stripe_processor,
       donor: @donor,
@@ -35,7 +33,6 @@ describe WebhookPayload do
       source_external_id: '187',
       created_at: Time.now
     )
-    Transaction.set_callback(:save, :after, :notify_webhooks)
   end
 
   it 'Correctly generates an Identity Webhook' do

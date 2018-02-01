@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module WebhookPayload
   def get_webhook_payload(outgoing_webhook, transaction)
     case outgoing_webhook.system
