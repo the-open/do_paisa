@@ -3,7 +3,7 @@
 ActiveAdmin.register OutgoingWebhook do
   menu parent: 'Webhooks'
 
-  permit_params :name, :url, :processor_id
+  permit_params :name, :url, :processor_id, :system
 
   form do |f|
     f.inputs do
