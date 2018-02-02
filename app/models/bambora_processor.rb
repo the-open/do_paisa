@@ -4,6 +4,8 @@ class BamboraProcessor < Processor
   def process(options)
     # TODO: Not sure if this is correct for Bambora? Token will be different every time
     donor = Donor.find_by(id: options[:token])
+    p "OPTINOS"
+    p options
     donor = add_donor(options[:token], options[:metadata], options[:source]) if donor.nil?
 
     config_data = JSON.parse(config) if config
@@ -23,8 +25,8 @@ class BamboraProcessor < Processor
       status: response.message,
       data: response.params.to_json,
       donor: donor,
-      source_system: source[:system] || donor.source_system,
-      source_external_id: source[:external_id] || donor.source_external_id
+      source_system: options[:source]['system'] || donor.source_system,
+      source_external_id: options[:source]['external_id'] || donor.source_external_id
     )
 
     if recurring_donor?(options, transaction)
@@ -97,7 +99,7 @@ class BamboraProcessor < Processor
       raise BamboraProcessorCustomerCreateError, response.message
     end
 
-    donor = Donor.find_or_initialize_by!(
+    donor = Donor.find_or_initialize_by(
       processor_id: id,
       external_id: customer_vault_id
     )
@@ -105,8 +107,8 @@ class BamboraProcessor < Processor
     donor.update_attributes(
       data: response.params.to_json,
       metadata: metadata,
-      source_system: source['system'],
-      source_external_id: source['external_id']
+      source_system: source['system'] || 'unknown',
+      source_external_id: source['external_id'] || 'unknown'
     )
     donor.save!
 
