@@ -22,8 +22,8 @@ class StripeProcessor < Processor
       status: charge.status,
       data: charge.to_json,
       donor: donor,
-      source_system: source[:system] || donor.source_system,
-      source_external_id: source[:external_id] || donor.source_external_id
+      source_system: source['system'] || donor.source_system,
+      source_external_id: source['external_id'] || donor.source_external_id
     )
 
     if recurring_donor?(options, transaction)
@@ -76,8 +76,8 @@ class StripeProcessor < Processor
       external_id: customer.id,
       data: customer.to_json,
       metadata: metadata,
-      source_system: source['system'],
-      source_external_id: source['external_id']
+      source_system: source['system'] || 'unknown',
+      source_external_id: source['external_id'] || 'unknown'
     )
 
     donor

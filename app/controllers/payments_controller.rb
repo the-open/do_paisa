@@ -13,6 +13,7 @@ class PaymentsController < ApiController
         token: params[:token],
         amount: params[:amount],
         metadata: params[:metadata],
+        source: params[:source],
         recurring: params[:recurring]
       }
       transaction_response = @processor.process(process_params)

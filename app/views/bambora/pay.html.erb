@@ -49,11 +49,12 @@
     </form>
 
     <script>
-      function saveTokenAndChargeCard(token, donationAmount, metadata, recurring) {
+      function saveTokenAndChargeCard(token, donationAmount, metadata, source, recurring) {
         var url = '<%= "#{pay_url(@processor)}?key=#{@api_user.key}" %>';
         var data = JSON.stringify({
           token: token,
           metadata: metadata,
+          source: source,
           amount: donationAmount,
           recurring: recurring
         });
@@ -128,8 +129,8 @@
             window.addEventListener("message", function(event) {
               var data = event.data;
               if (data.action === "submit") {
-                console.log(data.donationAmount, data.metadata, data.recurring)
-                self.onSubmit(data.donationAmount, data.metadata, data.recurring)
+                console.log(data.donationAmount, data.metadata, data.source, data.recurring)
+                self.onSubmit(data.donationAmount, data.metadata, data.source, data.recurring)
               }
             }, false);
             
@@ -164,7 +165,7 @@
             });
             
           },
-          onSubmit: function(donationAmount, metadata, recurring) {
+          onSubmit: function(donationAmount, metadata, source, recurring) {
             var self = this;
             var payButton = parent.document.getElementById('pay-button');
             
@@ -181,7 +182,7 @@
                 self.processTokenError(result.error);
               } else {
                 self.processTokenSuccess(result.token);
-                saveTokenAndChargeCard(result.token, donationAmount, metadata, recurring);
+                saveTokenAndChargeCard(result.token, donationAmount, metadata, source, recurring);
               }
             };
 

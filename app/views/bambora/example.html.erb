@@ -201,6 +201,8 @@
                     <iframe src="/payments/<%= @processor.id %>/pay?key=<%= @api_key %>" class="col-8 credit-card" frameBorder="0" scrolling="no" height="200">
                     </iframe>
                   </div>
+                  <input type="hidden" id="source_system" value="dopaisa_hosted">
+                  <input type="hidden" id="source_external_id" value="123">
                   <div class="pay-button text-center mb-3">
                     <button id="pay-button" type="submit" class="btn btn-dark m-auto pl-5 pr-5 pt-2 pb-2" disabled=true>Pay</button>
                   </div>
@@ -253,11 +255,16 @@
               postcode: $("input#postcode").val(),
               country: "CA"      
             };
+            var source = {
+              system: $("input#source_system").val(),
+              external_id: $("input#source_system").val()
+            };
             console.log(metadata)
             var data = {
               action: "submit",
               donationAmount: window.donationAmount,
               metadata: metadata,
+              source: source,
               recurring: $("#recurring").is(":checked")
             };
             console.log("Submitting from parent window");
