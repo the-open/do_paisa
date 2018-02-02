@@ -97,7 +97,7 @@ class BamboraProcessor < Processor
       raise BamboraProcessorCustomerCreateError, response.message
     end
 
-    donor = Donor.find_or_initialize_by!(
+    donor = Donor.find_or_initialize_by(
       processor_id: id,
       external_id: customer_vault_id
     )
