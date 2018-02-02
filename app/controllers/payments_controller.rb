@@ -5,7 +5,7 @@ class PaymentsController < ApiController
     allowed_origin_uri = URI(@api_user.allowed_origin)
     allowed_host = "#{allowed_origin_uri.host}:#{allowed_origin_uri.port}"
 
-    response.headers['Content-Security-Policy'] = "frame-ancestors #{allowed_host}"
+    response.headers['Content-Security-Policy'] = "frame-ancestors #{@api_user.allowed_origin}"
     response.headers['X-Frame-Options'] = "ALLOW-FROM #{@api_user.allowed_origin}"
     @processor = Processor.where(id: params['id']).take!
     if request.post?
