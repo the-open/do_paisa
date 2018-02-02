@@ -8,6 +8,8 @@ ActiveAdmin.register Donor do
       row :external_id
       row :metadata
       row :data
+      row :source_system
+      row :source_external_id
       row :created_at
       row :updated_at
       panel 'Transactions' do
