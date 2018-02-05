@@ -191,18 +191,18 @@
           },
           setPayButton: function() {
 
-            var payButton = parent.document.getElementById('pay-button');
+            // var payButton = parent.document.getElementById('pay-button');
             
             if (isCardNumberComplete && isCVVComplete && isExpiryComplete) {
               var message = {
                 enable: true
               }
               window.postMessage(message, "*");
-              payButton.disabled = false;
+              // payButton.disabled = false;
               payButton.className = 'btn btn-dark m-auto pl-5 pr-5 pt-2 pb-2';
             } else {
-              payButton.disabled = true;
-              payButton.className = 'btn btn-dark disabled m-auto pl-5 pr-5 pt-2 pb-2';
+              // payButton.disabled = true;
+              // payButton.className = 'btn btn-dark disabled m-auto pl-5 pr-5 pt-2 pb-2';
             }
           },
           toggleProcessingScreen: function() {
