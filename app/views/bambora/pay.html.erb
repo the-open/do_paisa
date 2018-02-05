@@ -195,7 +195,7 @@
             
             if (isCardNumberComplete && isCVVComplete && isExpiryComplete) {
               var message = {
-                enable: true
+                disable: false
               }
               console.log("sending message")
               parent.postMessage(message, "*");
