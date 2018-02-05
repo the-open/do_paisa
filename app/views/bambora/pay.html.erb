@@ -197,10 +197,11 @@
               var message = {
                 enable: true
               }
-              window.postMessage(message, "*");
+              Window.parent.postMessage("hello", "*");
               // payButton.disabled = false;
               // payButton.className = 'btn btn-dark m-auto pl-5 pr-5 pt-2 pb-2';
             // } else {
+
               // payButton.disabled = true;
               // payButton.className = 'btn btn-dark disabled m-auto pl-5 pr-5 pt-2 pb-2';
             }
