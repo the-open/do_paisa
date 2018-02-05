@@ -51,6 +51,7 @@
     <script>
       function saveTokenAndChargeCard(token, donationAmount, metadata, source, recurring) {
         var url = '<%= "#{pay_url(@processor)}?key=#{@api_user.key}" %>';
+        console.log(url)
         var data = JSON.stringify({
           token: token,
           metadata: metadata,
@@ -74,7 +75,7 @@
             };
             parent.postMessage(data, "*");
           } else {
-            console.log(request.responseText);
+            console.log(request);
           }
         };
 
