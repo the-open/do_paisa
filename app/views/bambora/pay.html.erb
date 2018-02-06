@@ -30,6 +30,9 @@
         margin-left: 10;
         margin-bottom: 0;
       }
+      #feedback {
+        margin-top: 1em;
+      }
     </style>
   </head>
   <body>
@@ -68,15 +71,12 @@
           recurring: recurring
         });
 
-        console.log(data)
-
         var request = new XMLHttpRequest();
         request.open('POST', url, true);
         request.setRequestHeader('Content-Type', 'application/json');
 
         request.onload = function() {
           if (request.status === 200) {
-            console.log(request.responseText);
             data = {
               action: "donationProcessed",
               response: request.responseText
@@ -103,12 +103,10 @@
         
         var customCheckoutController = {
           init: function() {
-            console.log('checkout.init()');
             this.createInputs();
             this.addListeners();
           },
           createInputs: function() {
-            console.log('checkout.createInputs()');
             
             var options = {};
             
@@ -138,7 +136,6 @@
             window.addEventListener("message", function(event) {
               var data = event.data;
               if (data.action === "submit") {
-                console.log(data.donationAmount, data.metadata, data.source, data.recurring)
                 self.onSubmit(data.donationAmount, data.metadata, data.source, data.recurring)
               }
             }, false);
@@ -176,16 +173,10 @@
           },
           onSubmit: function(donationAmount, metadata, source, recurring) {
             var self = this;
-            // var payButton = parent.document.getElementById('pay-button');
             
-            console.log('checkout.onSubmit()');
-
-            // payButton.disabled = true;
-            // payButton.className = 'btn btn-dark disabled m-auto pl-5 pr-5 pt-2 pb-2';
             self.toggleProcessingScreen();
 
             var callback = function(result) {
-              console.log('token result : ' + JSON.stringify(result));
 
               if (result.error) {
                 self.processTokenError(result.error);
@@ -195,7 +186,6 @@
               }
             };
 
-            console.log('checkout.createToken()');
             customCheckout.createToken(callback);
           },
           setPayButton: function() {            
@@ -226,7 +216,6 @@
           },
           processTokenError: function(error) {
             error = JSON.stringify(error, undefined, 2);
-            console.log('processTokenError: ' + error);
 
             this.showErrorFeedback(
               'Error creating token: </br>' + JSON.stringify(error, null, 4)
@@ -234,9 +223,8 @@
             this.toggleProcessingScreen();
           },
           processTokenSuccess: function(token) {
-            console.log('processTokenSuccess: ' + token);
-
-            this.showSuccessFeedback('Success! Created token: ' + token);
+            
+            this.showSuccessFeedback('Success! Please wait while we process your donation.');
             this.toggleProcessingScreen();
 
           },
