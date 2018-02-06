@@ -30,16 +30,19 @@
     <form id="checkout-form" height="40px">
       
       <div class="form-row">
+        <label for="card-number">Card number</label>
         <div class="input" id="card-number"></div>
         <label for="card-number" id="card-number-feedback-message"></label>
       </div>
       
       <div class="form-row">
+        <label for="cvv">Security code</label>
         <div class="input" id="card-cvv"></div>
         <label for="card-cvv" id="cvv-feedback-message"></label>
       </div>
       
       <div class="form-row">
+        <label for="expiry">Expiry</label>
         <div class="input" id="card-expiry"></div>
         <label for="card-expiry" id="expiry-feedback-message"></label>
       </div>
@@ -51,7 +54,6 @@
     <script>
       function saveTokenAndChargeCard(token, donationAmount, metadata, source, recurring) {
         var url = '<%= "#{pay_url(@processor)}?key=#{@api_user.key}" %>';
-        console.log(url)
         var data = JSON.stringify({
           token: token,
           metadata: metadata,
