@@ -70,6 +70,8 @@
           amount: donationAmount,
           recurring: recurring
         });
+        
+        console.log(recurring);
 
         var request = new XMLHttpRequest();
         request.open('POST', url, true);
