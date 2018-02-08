@@ -197,6 +197,7 @@
               response: request.responseText
             };
             console.log("posting to parent");
+            debugger;
             parent.postMessage(data, "*");
           } else {
             console.log('error');
