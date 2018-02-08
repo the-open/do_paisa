@@ -196,6 +196,7 @@
               action: "donationProcessed",
               response: request.responseText
             };
+            console.log("posting to parent");
             parent.postMessage(data, "*");
           } else {
             console.log('error');
