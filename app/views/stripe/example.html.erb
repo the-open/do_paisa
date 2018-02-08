@@ -118,25 +118,9 @@
                   <p class="fat-text large-text">Thanks, we just need a few more details</p>
                   <div class="row">
                     <div class="col">
-                      <p class="input-label">Your Full Name</p>
-                    </div>
-                    <div class="col-8">
-                      <input type="text" class="form-control metadata" placeholder="John Doe" id="name">
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col">
-                      <p class="input-label">Your Email</p>
-                    </div>
-                    <div class="col-8">
-                      <input type="email" class="form-control metadata" placeholder="email@example.org" id="email">
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col">
                       <p class="input-label">Credit Card Details</p>
                     </div>
-                    <iframe src="/payments/<%= @processor.id %>/pay?key=<%= @api_key %>" class="col-8 credit-card" frameBorder="0" scrolling="no" height="80">
+                    <iframe src="/payments/<%= @processor.id %>/pay?key=<%= @api_key %>" class="col-8 credit-card" frameBorder="0" scrolling="no" height="200">
                     </iframe>
                   </div>
                   <input type="hidden" id="source_system" value="dopaisa_hosted">

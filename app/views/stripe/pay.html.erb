@@ -5,33 +5,182 @@
       body {
         margin: 0;
       }
+      
       .field {
-        display: block;
-        padding: .5rem .75rem;
-        font-size: 1rem;
-        line-height: 1.25;
-        color: #495057;
-        background-color: #fff;
-        background-image: none;
-        background-clip: padding-box;
-        border: 1px solid rgba(0,0,0,.15);
-        border-radius: .25rem;
-        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        height: 40px;
+        position: relative;
+        width: 100%;
+        height: 50px;
+        margin: 0 10px;
       }
+
+      .field.half-width {
+        width: 50%;
+      }
+
+      .field.quarter-width {
+        width: calc(25% - 10px);
+      }
+
+      .baseline {
+        position: absolute;
+        width: 100%;
+        height: 1px;
+        left: 0;
+        bottom: 0;
+        background-color: #cfd7df;
+        transition: background-color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+
+      label {
+        position: absolute;
+        width: 100%;
+        left: 0;
+        bottom: 8px;
+        color: #cfd7df;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        transform-origin: 0 50%;
+        cursor: text;
+        transition-property: color, transform;
+        transition-duration: 0.3s;
+        transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+
+      .input {
+        position: absolute;
+        width: 100%;
+        left: 0;
+        bottom: 0;
+        padding-bottom: 7px;
+        color: #32325d;
+        background-color: transparent;
+      }
+
+      .input::-webkit-input-placeholder {
+        color: transparent;
+        transition: color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+
+      .input::-moz-placeholder {
+        color: transparent;
+        transition: color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+
+      .input:-ms-input-placeholder {
+        color: transparent;
+        transition: color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+
+      .input.StripeElement {
+        opacity: 0;
+        transition: opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        will-change: opacity;
+      }
+
+      .input.focused,
+      .input:not(.empty) {
+        opacity: 1;
+      }
+
+      .input.focused::-webkit-input-placeholder,
+      .input:not(.empty)::-webkit-input-placeholder {
+        color: #cfd7df;
+      }
+
+      .input.focused::-moz-placeholder,
+      .input:not(.empty)::-moz-placeholder {
+        color: #cfd7df;
+      }
+
+      .input.focused:-ms-input-placeholder,
+      .input:not(.empty):-ms-input-placeholder {
+        color: #cfd7df;
+      }
+
+      .input.focused + label,
+      .input:not(.empty) + label {
+        color: #aab7c4;
+        transform: scale(0.85) translateY(-25px);
+        cursor: default;
+      }
+
+      .input.focused + label {
+        color: #45b29d;
+      }
+
+      .input.invalid + label {
+        color: #ffa27b;
+      }
+
+      .input.focused + label + .baseline {
+        background-color: #45b29d;
+      }
+
+      .input.focused.invalid + label + .baseline {
+        background-color: #e25950;
+      }
+
+      input, button {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        outline: none;
+        border-style: none;
+      }
+
+      input:-webkit-autofill {
+        -webkit-text-fill-color: #e39f48;
+        transition: background-color 100000000s;
+        -webkit-animation: 1ms void-animation-out;
+      }
+
+      .StripeElement--webkit-autofill {
+        background: transparent !important;
+      }
+
+      input:active {
+        background-color: #159570;
+      }
+      
+      #card-errors {
+        font-size: 12px;
+        margin-top: 2em;
+        margin-bottom: 5em;
+        margin-left: 1em;
+        color: #E25950 !important;
+      }
+
     </style>
   </head>
   <body>
-    <form id="payment-form">
-      <div class="form-row">
-        <div id="card-element" class="field">
+    <div class="payment-form" id="payment">
+      <form>
+        <div class="row">
+          <div class="field">
+            <div id="card-number" class="input empty"></div>
+            <label for="card-number">Card number</label>
+            <div class="baseline"></div>
+          </div>
         </div>
-      </div>
-      <div class="form-row">
+        <div class="row">
+          <div class="field half-width">
+            <div id="card-expiry" class="input empty"></div>
+            <label for="card-expiry">Expiry date</label>
+            <div class="baseline"></div>
+          </div>
+          <div class="field half-width">
+            <div id="card-cvc" class="input empty"></div>
+            <label for="card-cvc">Security Code</label>
+            <div class="baseline"></div>
+          </div>
+        </div>
         <div id="card-errors" role="alert"></div>
+      </form>
+
       </div>
-    </form>
+
+
 
     <script>
       function saveTokenAndChargeCard(token, donationAmount, metadata, source, recurring) {
@@ -70,27 +219,90 @@
 
       var stripe = Stripe('<%= @stripe_publishable_key %>');
       var elements = stripe.elements();
-      var style = {
+      var elementStyles = {
         base: {
-          color: '#495057',
-          lineHeight: '1.25',
+          color: '#32325D',
+          fontWeight: 500,
+          fontFamily: 'Source Code Pro, Consolas, Menlo, monospace',
+          fontSize: '16px',
           fontSmoothing: 'antialiased',
-          fontSize: '1rem',
+
           '::placeholder': {
-            color: '#868ea9'
-          }
+            color: '#CFD7DF',
+          },
+          ':-webkit-autofill': {
+            color: '#e39f48',
+          },
         },
         invalid: {
-          color: '#fa755a',
-          iconColor: '#fa755a'
-        }
+          color: '#E25950',
+
+          '::placeholder': {
+            color: '#FFCCA5',
+          },
+        },
       };
+      
+      var inputs = document.querySelectorAll('.payment-form .input');
+      Array.prototype.forEach.call(inputs, function(input) {
+        input.addEventListener('focus', function() {
+          input.classList.add('focused');
+        });
+        input.addEventListener('blur', function() {
+          input.classList.remove('focused');
+        });
+        input.addEventListener('keyup', function() {
+          if (input.value.length === 0) {
+            input.classList.add('empty');
+          } else {
+            input.classList.remove('empty');
+          }
+        });
+      });
 
-      var card = elements.create('card', {style: style});
+      var elementClasses = {
+        focus: 'focused',
+        empty: 'empty',
+        invalid: 'invalid',
+      };
+      
+      var cardNumber = elements.create('cardNumber', {
+        style: elementStyles,
+        classes: elementClasses,
+      });
+      cardNumber.mount('#card-number');
+      
+      var cardExpiry = elements.create('cardExpiry', {
+        style: elementStyles,
+        classes: elementClasses,
+      });
+      cardExpiry.mount('#card-expiry');
+      
+      var cardCvc = elements.create('cardCvc', {
+        style: elementStyles,
+        classes: elementClasses,
+      });
+      cardCvc.mount('#card-cvc');
 
-      card.mount('#card-element');
-
-      card.addEventListener('change', function(event) {
+      cardNumber.addEventListener('change', function(event) {
+        var displayError = document.getElementById('card-errors');
+        if (event.error) {
+          displayError.textContent = event.error.message;
+        } else {
+          displayError.textContent = '';
+        }
+      });
+      
+      cardExpiry.addEventListener('change', function(event) {
+        var displayError = document.getElementById('card-errors');
+        if (event.error) {
+          displayError.textContent = event.error.message;
+        } else {
+          displayError.textContent = '';
+        }
+      });
+      
+      cardCvc.addEventListener('change', function(event) {
         var displayError = document.getElementById('card-errors');
         if (event.error) {
           displayError.textContent = event.error.message;
@@ -99,13 +311,16 @@
         }
       });
 
-      function submitCard(donationAmount, metadata, source, recurring) {
-        stripe.createToken(card).then(function(result) {
+      function registerElements(elements, donationAmount, metadata, recurring) {
+        var form = document.getElementById('payment');
+        var error = document.getElementById('card-errors');
+
+        stripe.createToken(elements[0], metadata).then(function(result) {
           if (result.error) {
             var errorElement = document.getElementById('card-errors');
             errorElement.textContent = result.error.message;
           } else {
-            saveTokenAndChargeCard(result.token, donationAmount, metadata, source, recurring);
+            saveTokenAndChargeCard(result.token, donationAmount, metadata, recurring);
           }
         });
       }
@@ -113,7 +328,7 @@
       window.addEventListener("message", function(event) {
         var data = event.data;
         if (data.action === "submit") {
-          submitCard(data.donationAmount, data.metadata, data.source, data.recurring);
+          registerElements([cardNumber, cardExpiry, cardCvc], data.donationAmount, data.metadata, data.recurring);
         }
       }, false);
     </script>
