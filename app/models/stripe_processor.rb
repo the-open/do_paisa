@@ -22,7 +22,7 @@ class StripeProcessor < Processor
       status: charge.status,
       data: charge.to_json,
       donor: donor,
-      source_system: source['system'] || donor.source_system,
+      source_system: options[:source]['system'] || donor.source_system,
       source_external_id: source['external_id'] || donor.source_external_id
     )
 
