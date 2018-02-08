@@ -303,7 +303,7 @@
         }
       });
 
-      function registerElements(elements, donationAmount, metadata, recurring) {
+      function registerElements(elements, donationAmount, metadata, source, recurring) {
         var form = document.getElementById('payment');
         var error = document.getElementById('card-errors');
 
@@ -312,7 +312,7 @@
             var errorElement = document.getElementById('card-errors');
             errorElement.textContent = result.error.message;
           } else {
-            saveTokenAndChargeCard(result.token, donationAmount, metadata, recurring);
+            saveTokenAndChargeCard(result.token, donationAmount, metadata, source, recurring);
           }
         });
       }
@@ -320,7 +320,7 @@
       window.addEventListener("message", function(event) {
         var data = event.data;
         if (data.action === "submit") {
-          registerElements([cardNumber, cardExpiry, cardCvc], data.donationAmount, data.metadata, data.recurring);
+          registerElements([cardNumber, cardExpiry, cardCvc], data.donationAmount, data.metadata, data.source, data.recurring);
         }
       }, false);
     </script>
