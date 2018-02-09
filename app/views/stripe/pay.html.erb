@@ -190,17 +190,17 @@
         request.setRequestHeader('Content-Type', 'application/json');
 
         request.onload = function() {
-          if (request.status === 200) {
-            console.log(request.responseText);
+          var response = JSON.parse(request.responseText);
+          console.log("REPONSE FROM STRIPE: " + response.status)
+          if (response.status) {
             data = {
               action: "donationProcessed",
-              response: request.responseText
+              response: response
             };
             console.log("posting to parent");
-            debugger;
             parent.postMessage(data, "*");
           } else {
-            console.log('error');
+            console.log("error")
           }
         };
 

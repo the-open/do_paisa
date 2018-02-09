@@ -6,7 +6,16 @@ class StripeProcessor < Processor
     }
 
     donor = Donor.find_by(id: options[:token])
-    donor = add_donor(options[:token], options[:metadata], options[:source]) if donor.nil?
+    success, response = add_donor(options[:token], options[:metadata], options[:source]) if donor.nil?
+    if success 
+      donor = response
+    else
+      return {
+        status: "failed",
+        message: response
+      }
+    end
+      
 
     charge_params[:customer] = donor.external_id
 
@@ -40,7 +49,7 @@ class StripeProcessor < Processor
 
     {
       transaction_id: transaction.id,
-      status: transaction.status,
+      status: "success",
       amount: transaction.amount,
       donor_id: donor.id,
       recurring: transaction.recurring
@@ -66,10 +75,16 @@ class StripeProcessor < Processor
       email: metadata['email'],
       metadata: metadata
     }
-    customer = Stripe::Customer.create(
-      customer_params,
-      api_key: api_secret
-    )
+    
+    begin
+      customer = Stripe::Customer.create(
+        customer_params,
+        api_key: api_secret
+      )
+    rescue Stripe::CardError => e
+      return [false, e.message]
+    end
+      
 
     donor = Donor.create!(
       processor_id: id,
@@ -80,6 +95,6 @@ class StripeProcessor < Processor
       source_external_id: source['external_id'] || 'unknown'
     )
 
-    donor
+    return [true, donor]
   end
 end
