@@ -175,12 +175,13 @@
 
 
     <script>
-      function saveTokenAndChargeCard(token, donationAmount, metadata, source, recurring) {
+      function saveTokenAndChargeCard(token, donationAmount, metadata, source, key, recurring) {
         var url = '<%= "#{pay_url(@processor)}?key=#{@api_user.key}" %>';
         var data = JSON.stringify({
           token: token.id,
           metadata: metadata,
           source: source,
+          idempotency_key: key
           amount: donationAmount,
           recurring: recurring
         });
@@ -305,7 +306,7 @@
         }
       });
 
-      function registerElements(elements, donationAmount, metadata, source, recurring) {
+      function registerElements(elements, donationAmount, metadata, source, key, recurring) {
         var form = document.getElementById('payment');
         var error = document.getElementById('card-errors');
 
@@ -314,7 +315,7 @@
             var errorElement = document.getElementById('card-errors');
             errorElement.textContent = result.error.message;
           } else {
-            saveTokenAndChargeCard(result.token, donationAmount, metadata, source, recurring);
+            saveTokenAndChargeCard(result.token, donationAmount, metadata, source, key, recurring);
           }
         });
       }
@@ -322,7 +323,7 @@
       window.addEventListener("message", function(event) {
         var data = event.data;
         if (data.action === "submit") {
-          registerElements([cardNumber, cardExpiry, cardCvc], data.donationAmount, data.metadata, data.source, data.recurring);
+          registerElements([cardNumber, cardExpiry, cardCvc], data.donationAmount, data.metadata, data.source, data.key, data.recurring);
         }
       }, false);
     </script>
