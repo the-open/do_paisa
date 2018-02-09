@@ -1,27 +1,33 @@
 class StripeProcessor < Processor
   def process(options)
+    donor = Donor.find_by(token: options[:token])
+
+    if donor.nil?
+      success, response = add_donor(options[:token], options[:metadata], options[:source])
+      if success 
+        donor = response
+      else
+        return {
+          status: "failed",
+          message: response
+        }
+      end
+    end
+
     charge_params = {
       amount: options[:amount],
-      currency: currency
+      currency: currency,
+      customer: donor.external_id
     }
 
-    donor = Donor.find_by(id: options[:token])
-    success, response = add_donor(options[:token], options[:metadata], options[:source]) if donor.nil?
-    if success 
-      donor = response
-    else
-      return {
-        status: "failed",
-        message: response
-      }
+    charge_options = { api_key: api_secret, stripe_version: "2018-02-06" }
+    if options[:idempotency_key].present?
+      charge_options[:idempotency_key] = options[:idempotency_key]
     end
-      
-
-    charge_params[:customer] = donor.external_id
 
     charge = Stripe::Charge.create(
       charge_params,
-      api_key: api_secret
+      charge_options
     )
 
     transaction = Transaction.create!(
@@ -48,6 +54,7 @@ class StripeProcessor < Processor
     end
 
     {
+      processor_transaction_id: charge.id,
       transaction_id: transaction.id,
       status: "success",
       amount: transaction.amount,
@@ -87,6 +94,7 @@ class StripeProcessor < Processor
       
 
     donor = Donor.create!(
+      token: token,
       processor_id: id,
       external_id: customer.id,
       data: customer.to_json,

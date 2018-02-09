@@ -14,7 +14,8 @@ class PaymentsController < ApiController
         amount: params[:amount],
         metadata: params[:metadata],
         source: params[:source],
-        recurring: params[:recurring]
+        recurring: params[:recurring],
+        idempotency_key: params[:idempotency_key]
       }
       transaction_response = @processor.process(process_params)
       render json: transaction_response, status: 200
