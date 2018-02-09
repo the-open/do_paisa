@@ -192,13 +192,11 @@
 
         request.onload = function() {
           var response = JSON.parse(request.responseText);
-          console.log("REPONSE FROM STRIPE: " + response.status)
           if (response.status) {
             data = {
               action: "donationProcessed",
               response: response
             };
-            console.log("posting to parent");
             parent.postMessage(data, "*");
           } else {
             console.log("error")
