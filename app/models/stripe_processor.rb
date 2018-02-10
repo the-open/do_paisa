@@ -17,7 +17,7 @@ class StripeProcessor < Processor
     charge_params = {
       amount: options[:amount],
       currency: currency,
-      customer: donor.token
+      customer: donor.external_id
     }
 
     charge_options = { api_key: api_secret, stripe_version: "2018-02-06" }
