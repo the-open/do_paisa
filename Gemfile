@@ -37,6 +37,9 @@ gem 'stripe'
 
 gem 'newrelic_rpm'
 
+gem 'sidekiq'
+gem 'sidekiq-scheduler'
+
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'database_cleaner'
