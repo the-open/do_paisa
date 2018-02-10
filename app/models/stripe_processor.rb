@@ -72,7 +72,7 @@ class StripeProcessor < Processor
   def recurring_donor?(options, transaction)
     options[:recurring] &&
       options[:recurring_donor_id].nil? &&
-      transaction.status == 'success'
+      transaction.status == 'succeeded'
   end
 
   def add_donor(token, metadata = {}, source)
