@@ -17,7 +17,7 @@ class StripeProcessor < Processor
     charge_params = {
       amount: options[:amount],
       currency: currency,
-      customer: donor.external_id
+      customer: donor.token
     }
 
     charge_options = { api_key: api_secret, stripe_version: "2018-02-06" }
@@ -72,7 +72,7 @@ class StripeProcessor < Processor
   def recurring_donor?(options, transaction)
     options[:recurring] &&
       options[:recurring_donor_id].nil? &&
-      transaction.status.eql?('succeeded')
+      transaction.status == 'success'
   end
 
   def add_donor(token, metadata = {}, source)
