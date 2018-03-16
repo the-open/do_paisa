@@ -65,7 +65,52 @@ class IatsProcessor < Processor
     }
   end
 
+  def update_transactions_status(date)
+    transactions = get_transactions(date)
+    transactions.each do |transaction_data|
+      transaction = Transaction.find_by(
+        processor: self,
+        external_id: transaction_data[:tnid]
+      )
+
+      if transaction
+        transaction.update_attributes(
+          status: transaction_data[:rst]
+        )
+        # Fire webhook here?
+      end
+    end
+  end
+
   private
+
+  def get_transactions(date)
+    transactions_params = {
+      agent_code: api_key,
+      password: api_secret,
+      date: date.iso8601
+    }
+
+    approved_status, approved_transactions = IatsEft.get_transactions(transactions_params, 'approved')
+    reject_status, reject_transactions = IatsEft.get_transactions(transactions_params, 'reject')
+    return_status, return_transactions = IatsEft.get_transactions(transactions_params, 'return')
+
+    all_transactions = []
+
+    if approved_status && !approved_transactions.nil?
+      all_transactions += approved_transactions
+    end
+
+    if reject_status && !reject_transactions.nil?
+      all_transactions += reject_transactions
+    end
+
+    if return_status && !return_transactions.nil?
+      all_transactions += return_transactions
+    end
+
+    all_transactions
+  end
 
   def recurring_donor?(options, transaction)
     options[:recurring] &&

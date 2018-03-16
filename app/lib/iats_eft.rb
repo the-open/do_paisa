@@ -79,4 +79,49 @@ class IatsEft
       end
     end
   end
+
+  def self.get_transactions(options, type)
+    client = report_client
+
+    response = client.call(
+      "get_acheft_#{type}_specific_date_xml".to_sym,
+      message: get_params(options)
+    )
+
+    parse_response(response.body, type)
+  end
+
+  class << self
+    private
+
+    def parse_response(response, type)
+      iatsresponse = response["get_acheft_#{type}_specific_date_xml_response".to_sym]["get_acheft_#{type}_specific_date_xml_result".to_sym][:iatsresponse]
+
+      if iatsresponse[:errors].nil?
+        return [true, nil] if iatsresponse[:journalreport].nil?
+        transactions = iatsresponse[:journalreport][:tn]
+        return [true, transactions]
+      else
+        return [false, iatsresponse[:errors]]
+      end
+    end
+
+    def report_client
+      if @report_client.nil?
+        @report_client = Savon.client(
+          wsdl: 'https://www.iatspayments.com/netgate/ReportLinkv2.asmx?WSDL',
+          soap_version: 2
+        )
+      end
+      @report_client
+    end
+
+    def get_params(options)
+      {
+        agentCode: options[:agent_code],
+        password: options[:password],
+        date: options[:date]
+      }
+    end
+  end
 end
