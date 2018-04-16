@@ -1,16 +1,38 @@
 <html>
   <head>
     <script src="https://js.stripe.com/v3/"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"></script>
+    <script 
+      src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.bundle.min.js"
+      integrity="sha256-uz0BcnPtSHZ02XZthAHPRYIoWWrcwMOmAk9ErnFQkNs="
+      crossorigin="anonymous"></script>
+    <link 
+      rel="stylesheet" 
+      href="https://use.fontawesome.com/releases/v5.0.9/css/all.css" 
+      integrity="sha384-5SOiIsAziJl6AWe0HWRKTXlfcSHKmYV4RBF18PPJ173Kzn7jzMyFuTtk8JA7QQG1" 
+      crossorigin="anonymous">
     <style>
       body {
         margin: 0;
+      }      
+      .row {
+        display: -ms-flexbox;
+        display: flex;
+        margin: 0 5px 10px;
       }
-      
       .field {
         position: relative;
         width: 100%;
-        height: 50px;
+        height: 2.5rem;
         margin: 0 10px;
+        background: #fff;
+        border-radius: 4px;
+      }
+      .field.half-width {
+        width: 50%;
       }
 
       .baseline {
@@ -19,16 +41,18 @@
         height: 1px;
         left: 0;
         bottom: 0;
-        background-color: #cfd7df;
+        background-color: transparent;
         transition: background-color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
       }
 
       label {
         position: absolute;
         width: 100%;
-        left: 0;
+        left: 7px;
         bottom: 8px;
-        color: #cfd7df;
+        color: #333;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -42,7 +66,7 @@
       .input {
         position: absolute;
         width: 100%;
-        left: 0;
+        left: 10px;
         bottom: 0;
         padding-bottom: 7px;
         color: #32325d;
@@ -93,14 +117,20 @@
       .input.focused + label,
       .input:not(.empty) + label {
         color: #aab7c4;
-        transform: scale(0.85) translateY(-25px);
+        transform: scale(0.70) translateY(-25px);
         cursor: default;
       }
 
       .input.focused + label {
         color: #45b29d;
       }
-
+      .input.focused + label > i{
+        display: none;
+      }
+      #cvc-icon {
+        cursor: pointer;
+        margin-left: 5px;
+      }
       .input.invalid + label {
         color: #ffa27b;
       }
@@ -137,12 +167,17 @@
       
       #card-errors {
         font-size: 12px;
-        margin-top: 2em;
-        margin-bottom: 5em;
-        margin-left: 1em;
+        margin-top: 10px;
+        /* margin-bottom: 5em; */
+        margin-left: 1.5em;
         color: #E25950 !important;
       }
 
+      .popover {
+        z-index: 10;
+        margin-left: 20px;
+        margin-top: 90px;
+      }
     </style>
   </head>
   <body>
@@ -152,19 +187,18 @@
           <div class="field">
             <div id="card-number" class="input empty"></div>
             <label for="card-number">Card number</label>
-            <div class="baseline"></div>
           </div>
         </div>
         <div class="row">
-          <div class="field">
+          <div class="field half-width">
             <div id="card-expiry" class="input empty"></div>
             <label for="card-expiry">Expiry date</label>
-            <div class="baseline"></div>
           </div>
-          <div class="field">
+          <div class="field half-width">
             <div id="card-cvc" class="input empty"></div>
-            <label for="card-cvc">Security Code</label>
-            <div class="baseline"></div>
+            <label for="card-cvc">
+              Security code<i data-toggle="popover" class="far fa-question-circle" id="cvc-icon"></i>
+            </label>
           </div>
         </div>
         <div id="card-errors" role="alert"></div>
@@ -303,6 +337,12 @@
           displayError.textContent = '';
         }
       });
+      
+      $('#cvc-icon').popover({
+        trigger: 'hover',
+        container: 'body',
+        content: 'On MasterCard, and Visa credit and debit cards the security code is a three-digit card security code. The code is printed on the back of the card next to the signature panel of the card.'
+      });
 
       function registerElements(elements, donationAmount, metadata, source, key, recurring) {
         var form = document.getElementById('payment');
@@ -321,7 +361,13 @@
       window.addEventListener("message", function(event) {
         var data = event.data;
         if (data.action === "submit") {
-          registerElements([cardNumber, cardExpiry, cardCvc], data.donationAmount, data.metadata, data.source, data.key, data.recurring);
+          // console.log("donation amount: " + data.donationAmount);
+          // console.log(data.metadata);
+          // console.log(data.source);
+          // console.log("idempotency key: " + data.idempotency_key);
+          // console.log("recurring: " + data.recurring);
+          console.log("posting....")
+          registerElements([cardNumber, cardExpiry, cardCvc], data.donationAmount, data.metadata, data.source, data.idempotency_key, data.recurring);
         }
       }, false);
     </script>

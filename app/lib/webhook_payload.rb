@@ -50,6 +50,7 @@ module WebhookPayload
   
   def recurring_webhook_payload(transaction)
     {
+      api_token: Rails.application.secrets.identity_api_token,
       cons_hash: {
         firstname: transaction.donor.metadata['name'].split(' ').first,
         lastname: transaction.donor.metadata['name'].split(' ')[1..-1].join(' '),

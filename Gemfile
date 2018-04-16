@@ -37,6 +37,7 @@ gem 'savon', '~> 2.12'
 gem 'stripe'
 
 gem 'newrelic_rpm'
+gem 'rollbar'
 
 gem 'sidekiq'
 gem 'sidekiq-scheduler'
