@@ -1,5 +1,9 @@
 ActiveAdmin.register Donor do
   actions :index, :show
+  filter :email, as: :string
+  filter :name, as: :string
+  filter :created_at
+  filter :updated_at
 
   show do
     attributes_table do

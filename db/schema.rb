@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180210013824) do
+ActiveRecord::Schema.define(version: 20180417143224) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,8 +44,8 @@ ActiveRecord::Schema.define(version: 20180210013824) do
     t.string "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.json "metadata"
-    t.json "data"
+    t.jsonb "metadata"
+    t.jsonb "data"
     t.text "source_system", null: false
     t.text "source_external_id", null: false
   end
@@ -56,7 +56,7 @@ ActiveRecord::Schema.define(version: 20180210013824) do
     t.string "api_key"
     t.string "api_secret"
     t.string "currency"
-    t.json "config"
+    t.jsonb "config"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -77,7 +77,7 @@ ActiveRecord::Schema.define(version: 20180210013824) do
   create_table "transactions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "processor_id"
     t.string "external_id"
-    t.json "data"
+    t.jsonb "data"
     t.bigint "amount"
     t.string "status"
     t.datetime "created_at", null: false
