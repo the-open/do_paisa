@@ -1,6 +1,6 @@
 ActiveAdmin.register RecurringDonor do
   actions :all, :except => [:destroy]
-  permit_params :next_charge_at, :ended_at
+  permit_params :next_charge_at, :ended_at, :amount
   
   preserve_default_filters!
   remove_filter :donor

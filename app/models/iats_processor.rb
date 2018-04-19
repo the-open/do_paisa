@@ -33,8 +33,8 @@ class IatsProcessor < Processor
         status: 'ToBeSent',
         data: response[:response],
         donor: donor,
-        source_system: options[:source]['system'] || donor.source_system,
-        source_external_id: options[:source]['external_id'] || donor.source_external_id
+        source_system: options[:source]['system'] || donor.source_system || 'unkown',
+        source_external_id: options[:source]['external_id'] || donor.source_external_id || 'unknown'
       )
     else
       return {
@@ -138,8 +138,8 @@ class IatsProcessor < Processor
         external_id: response[:customercode],
         data: response[:response],
         metadata: metadata.reject { |key, _| key.eql?(:account_number) },
-        source_system: source['system'] || 'unknown',
-        source_external_id: source['external_id'] || 'unknown'
+        source_system: source[:system] || 'unknown',
+        source_external_id: source[:external_id] || 'unknown'
       )
 
       return [true, donor]
