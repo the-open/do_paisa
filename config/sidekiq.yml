@@ -2,3 +2,6 @@
   hello_world:
     cron: '5,15,25,35,45,55 * * * * *'   # Runs once per minute
     class: ProcessRecurringDonorsJob
+  process_iats:
+    every: '0 18 * * * America/Toronto'
+    class: ProcessIatsJob

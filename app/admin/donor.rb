@@ -1,4 +1,5 @@
 ActiveAdmin.register Donor do
+  config.sort_order = 'updated_at_desc'
   actions :index, :show
   filter :email, as: :string
   filter :name, as: :string

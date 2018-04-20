@@ -1,4 +1,5 @@
 ActiveAdmin.register Transaction do
+  config.sort_order = 'updated_at_desc'
   actions :index, :show
   preserve_default_filters!
   remove_filter :donor, :recurring_donor, :external_id, :source_system, :source_external_id
