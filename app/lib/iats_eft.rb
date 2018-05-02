@@ -69,11 +69,17 @@ class IatsEft
       iatsresponse = response.body[:process_acheft_with_customer_code_response][:process_acheft_with_customer_code_result][:iatsresponse]
 
       errors = iatsresponse[:errors]
-      if errors.nil?
+      if errors.nil? && iatsresponse[:processresult][:authorizationresult].include?('OK')
         processresult = iatsresponse[:processresult]
         return {
           authorizationresult: processresult[:authorizationresult],
           transaction_id: processresult[:transactionid].delete("\n"),
+          response: response.body.to_json
+        }
+      else
+        return {
+          authorizationresult: iatsresponse[:processresult][:authorizationresult],
+          transaction_id: iatsresponse[:processresult][:transactionid],
           response: response.body.to_json
         }
       end

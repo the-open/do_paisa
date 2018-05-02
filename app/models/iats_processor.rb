@@ -44,7 +44,7 @@ class IatsProcessor < Processor
     end
 
     if recurring_donor?(options, transaction)
-      recurring_donor = add_recurring_donor(donor, charge.amount)
+      recurring_donor = add_recurring_donor(donor, transaction.amount)
       options[:recurring_donor_id] = recurring_donor.id
     end
 
