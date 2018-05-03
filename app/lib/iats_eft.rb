@@ -106,7 +106,7 @@ class IatsEft
       if iatsresponse[:errors].nil?
         return [true, nil] if iatsresponse[:journalreport].nil?
         transactions = iatsresponse[:journalreport][:tn]
-        return [true, transactions]
+        return [true, [transactions].flatten]
       else
         return [false, iatsresponse[:errors]]
       end
