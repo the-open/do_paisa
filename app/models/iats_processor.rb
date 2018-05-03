@@ -106,7 +106,7 @@ class IatsProcessor < Processor
     end
 
     if return_status && !return_transactions.nil?
-      all_transactions += return_transactions
+      all_transactions << return_transactions
     end
 
     all_transactions
