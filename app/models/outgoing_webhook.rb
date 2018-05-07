@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class OutgoingWebhook < Webhook
-  include WebhookPayload
   belongs_to :processor, optional: true
 
   def notify(transaction)
-    body = get_webhook_payload(self, transaction).to_json
+    webhook_payload = WebhookPayload.new(self.system, transaction)
+    body = webhook_payload.get_payload.to_json
 
     connection = Faraday.new(url: url)
     connection.post do |request|
