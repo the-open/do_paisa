@@ -3,7 +3,7 @@
 class OutgoingWebhook < Webhook
   belongs_to :processor, optional: true
 
-  def notify(transaction)
+  def notify_transaction(transaction)
     webhook_payload = WebhookPayload.new(self.system, transaction)
     body = webhook_payload.get_payload.to_json
 

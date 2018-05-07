@@ -43,8 +43,10 @@ describe WebhookPayload do
       card_brand: 'unknown',
       source: '187|act',
       source_system: 'act',
-      source_external_id: '187'
+      source_external_id: '187',
+      api_token: 'abcd1234'
     }
+    Rails.application.secrets.stub(:identity_api_token) { 'abcd1234' }
   end
 
   it 'Correctly generates an Identity Webhook' do

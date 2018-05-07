@@ -15,7 +15,7 @@ class Transaction < ApplicationRecord
   def notify_webhooks
     webhooks = OutgoingWebhook.where(processor_id: processor_id).or(OutgoingWebhook.where(processor_id: nil))
     webhooks.each do |webhook|
-      webhook.notify(self)
+      webhook.notify_transaction(self)
     end
   end
 

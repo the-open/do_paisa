@@ -37,6 +37,7 @@ class WebhookPayload
 
   def identity_payload
     payload = {
+      api_token: Rails.application.secrets.identity_api_token,
       system: 'do_paisa',
       external_id: @transaction.id,
       email: @transaction.donor.metadata['email'],
