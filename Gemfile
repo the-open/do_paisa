@@ -42,6 +42,8 @@ gem 'rollbar'
 gem 'sidekiq'
 gem 'sidekiq-scheduler'
 
+gem 'mustache'
+
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'database_cleaner'

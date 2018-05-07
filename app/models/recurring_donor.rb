@@ -4,6 +4,7 @@ class RecurringDonor < ApplicationRecord
   belongs_to :donor
 
   validates_presence_of :amount, :donor_id, :processor_id
+  after_commit :notify_email, on: :create
 
   def charge
     process_params = {
@@ -14,5 +15,9 @@ class RecurringDonor < ApplicationRecord
     }
 
     processor.process(process_params)
+  end
+
+  def notify_email
+    NotificationMailer.with(recurring_donor: self).recurring_started.deliver_later
   end
 end

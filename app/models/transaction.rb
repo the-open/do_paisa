@@ -5,7 +5,8 @@ class Transaction < ApplicationRecord
 
   validates_presence_of :amount, :external_id, :status, :processor_id
 
-  after_save :notify_webhooks, if: :transaction_successful?
+  after_commit :notify_webhooks, if: :transaction_successful?, on: :create
+  after_commit :notify_email, on: :create
 
   def transaction_successful?
     ['succeeded', 'Approved'].include?(status)
@@ -16,5 +17,18 @@ class Transaction < ApplicationRecord
     webhooks.each do |webhook|
       webhook.notify(self)
     end
+  end
+
+  def notify_email
+    if !recurring_donor
+      if transaction_successful?
+        NotificationMailer.with(transaction: self).one_off_success.deliver_later
+      end
+    else
+      # We only notify if a recurring donation fails
+      if !transaction_successful?
+        NotificationMailer.with(transaction: self).recurring_fail.deliver_later
+      end
+    end 
   end
 end

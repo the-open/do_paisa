@@ -24,6 +24,12 @@ ActiveAdmin.register IatsProcessor do
       row :created_at
       row :updated_at
     end
-    active_admin_comments
+
+    panel "Email Templates" do
+      table_for(resource.processor_email_templates) do |table|
+        column("email_type") { |pet| link_to pet.email_type.titleize, admin_processor_email_template_path(pet) }
+        column("subject") { |pet| pet.subject }
+      end
+    end
   end
 end

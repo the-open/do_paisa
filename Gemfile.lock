@@ -153,6 +153,7 @@ GEM
     multi_json (1.13.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
+    mustache (1.0.5)
     newrelic_rpm (4.8.0.341)
     nio4r (2.2.0)
     nokogiri (1.8.2)
@@ -329,6 +330,7 @@ DEPENDENCIES
   faker
   jbuilder (~> 2.5)
   listen (>= 3.0.5, < 3.2)
+  mustache
   newrelic_rpm
   omniauth (~> 1.6.1)
   omniauth-auth0 (~> 2.0.0)

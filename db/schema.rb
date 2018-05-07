@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180417143224) do
+ActiveRecord::Schema.define(version: 20180504142708) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,6 +38,21 @@ ActiveRecord::Schema.define(version: 20180417143224) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "donor_emails", force: :cascade do |t|
+    t.uuid "donor_id", null: false
+    t.text "html", null: false
+    t.text "subject", null: false
+    t.text "sender_name", null: false
+    t.text "sender_email", null: false
+    t.text "status"
+    t.text "external_id"
+    t.datetime "opened_at"
+    t.datetime "clicked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["donor_id"], name: "index_donor_emails_on_donor_id"
+  end
+
   create_table "donors", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "processor_id"
     t.string "external_id"
@@ -48,6 +63,18 @@ ActiveRecord::Schema.define(version: 20180417143224) do
     t.jsonb "data"
     t.text "source_system", null: false
     t.text "source_external_id", null: false
+  end
+
+  create_table "processor_email_templates", force: :cascade do |t|
+    t.uuid "processor_id", null: false
+    t.integer "email_type", null: false
+    t.text "html", null: false
+    t.text "subject", null: false
+    t.text "sender_name", null: false
+    t.text "sender_email", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["processor_id"], name: "index_processor_email_templates_on_processor_id"
   end
 
   create_table "processors", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -72,6 +99,14 @@ ActiveRecord::Schema.define(version: 20180417143224) do
     t.integer "consecutive_fail_count", default: 0, null: false
     t.datetime "ended_at"
     t.text "last_fail_reason"
+  end
+
+  create_table "settings", force: :cascade do |t|
+    t.text "key", null: false
+    t.text "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_settings_on_key"
   end
 
   create_table "transactions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

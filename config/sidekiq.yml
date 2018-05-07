@@ -1,3 +1,6 @@
+:queues:
+  - default
+  - mailers
 :schedule:
   hello_world:
     cron: '5,15,25,35,45,55 * * * * *'   # Runs once per minute

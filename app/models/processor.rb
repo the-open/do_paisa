@@ -1,5 +1,6 @@
 class Processor < ApplicationRecord
   has_many :donors
+  has_many :processor_email_templates
   
   def add_recurring_donor(donor, amount)
     RecurringDonor.create!(
