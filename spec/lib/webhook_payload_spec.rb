@@ -1,24 +1,20 @@
 require 'rails_helper'
-include WebhookPayload
 
 describe WebhookPayload do
   before do
     @stripe_processor = FactoryBot.create(:stripe_processor)
-    @outgoing_webhook = OutgoingWebhook.create!(
-      name: 'Test API',
-      url: 'https://api.com/webhook',
-      processor: @stripe_processor
-    )
-    @donor = Donor.new(
+    @donor = Donor.create!(
+      processor: @stripe_processor,
       external_id: SecureRandom.hex(32),
       token: SecureRandom.hex(32),
       source_system: 'act',
       source_external_id: '67',
       metadata: {
-        'name' => 'Johnny Bravo',
+        'first_name' => 'Johnny',
+        'last_name' => 'Bravo',
         'email' => 'test@example.com',
-        'postcode' => 'HP5 3LR',
-        'country' => 'GB'
+        'address_zip' => 'HP5 3LR',
+        'address_country' => 'GB'
       }
     )
 
@@ -33,14 +29,8 @@ describe WebhookPayload do
       source_external_id: '187',
       created_at: Time.now
     )
-  end
 
-  it 'Correctly generates an Identity Webhook' do
-    @outgoing_webhook.update_attributes(system: 'identity')
-
-    payload = get_webhook_payload(@outgoing_webhook, @transaction)
-
-    expect(payload).to eq(
+    @expected_payload = {
       system: 'do_paisa',
       external_id: @transaction.id,
       email: 'test@example.com',
@@ -53,7 +43,29 @@ describe WebhookPayload do
       card_brand: 'unknown',
       source: '187|act',
       source_system: 'act',
-      source_external_id: '187'
-    )
+      source_external_id: '187',
+      api_token: 'abcd1234'
+    }
+    Rails.application.secrets.stub(:identity_api_token) { 'abcd1234' }
+  end
+
+  it 'Correctly generates an Identity Webhook' do
+    payload = WebhookPayload.new('identity', @transaction).get_payload
+
+    expect(payload).to eq(@expected_payload)
+  end
+
+  it 'Includes the correct recurring donation data' do 
+    recurring_donor = RecurringDonor.create!(donor: @donor, processor: @stripe_processor, amount: 4201)
+    @transaction.update_attributes(recurring_donor: recurring_donor)
+
+    payload = WebhookPayload.new('identity', @transaction).get_payload
+
+    @expected_payload.merge!({
+      regular_donation_system: 'do_paisa',
+      regular_donation_external_id: recurring_donor.id
+    })
+
+    expect(payload).to eq(@expected_payload)
   end
 end
