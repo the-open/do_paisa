@@ -1,6 +1,7 @@
 class Processor < ApplicationRecord
   has_many :donors
   has_many :processor_email_templates
+  has_many :outgoing_webhooks
   
   def add_recurring_donor(donor, amount)
     RecurringDonor.create!(

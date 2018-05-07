@@ -5,20 +5,20 @@ class OutgoingWebhook < Webhook
 
   def notify_transaction(transaction)
     payload = WebhookPayload.new(self.system, transaction).get_payload
-    post_payload(payload)
+    post_payload(payload, url)
   end
 
   def notify_recurring(recurring_donor)
     payload = RecurringWebhookPayload.new(self.system, recurring_donor).get_payload
-    post_payload(payload)    
+    post_payload(payload, recurring_url)    
   end
 
-  def post_payload(payload)
+  def post_payload(payload, api_url)
     json_payload = payload.to_json
 
-    connection = Faraday.new(url: url)
+    connection = Faraday.new(url: api_url)
     connection.post do |request|
-      request.url url
+      request.url api_url
       request.headers['Content-Type'] = 'application/json'
       request.body = json_payload
     end

@@ -25,7 +25,17 @@ describe Transaction do
   end
 
   it "Sends a webhook if the transaction was successful" do 
-    expect_any_instance_of(Transaction).to receive(:notify_webhooks)
+    expect_any_instance_of(Transaction).to receive(:notify_webhooks).and_call_original
+    @stripe_processor.outgoing_webhooks << OutgoingWebhook.create!(system: 'identity', url: 'https://test.example.com/one_off_webhook')
+
+    stubs = Faraday::Adapter::Test::Stubs.new do |stub|
+      stub.post('/one_off_webhook') { |env| [200, {}, ''] }
+    end
+    fake_faraday = Faraday.new do |builder|
+      builder.adapter :test, stubs
+    end
+
+    expect(Faraday).to receive(:new).with(url: 'https://test.example.com/one_off_webhook').and_return(fake_faraday)
     Transaction.create!(@success_hash) 
   end
 
