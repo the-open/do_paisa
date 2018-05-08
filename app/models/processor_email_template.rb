@@ -1,7 +1,7 @@
 class ProcessorEmailTemplate < ApplicationRecord
   belongs_to :processor
 
-  enum email_type: [:one_off_success, :one_off_fail, :recurring_start, :recurring_fail]
+  enum email_type: [:one_off_approved, :one_off_fail, :recurring_start, :recurring_fail]
 
   validates_presence_of :processor, :html, :sender_name, :sender_email, :subject, :email_type
   validate :can_render?

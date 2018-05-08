@@ -7,15 +7,49 @@ class Transaction < ApplicationRecord
 
   validates_presence_of :amount, :external_id, :status, :processor_id
 
-  after_commit :notify_email, on: :create
+  after_commit :notify_email_approved, if: :should_send_email_approved?
+  after_commit :notify_email_pending, if: :should_send_email_pending?
+  after_commit :notify_email_rejected, if: :should_send_email_rejected?
+
   after_commit :notify_webhooks, if: :should_send_webhook?
   
   def should_send_webhook?
     transaction_successful? && saved_change_to_status?
   end
 
+  def should_send_email_approved?
+    transaction_successful? && saved_change_to_id? && saved_change_to_status?
+  end
+
+  def notify_email_approved
+    if !recurring_donor
+      NotificationMailer.with(transaction: self).one_off_approved.deliver_later
+    end
+  end 
+
+  def should_send_email_pending?
+    status == "pending" && saved_change_to_id?
+  end
+
+  def notify_email_pending
+    NotificationMailer.with(transaction: self).one_off_pending.deliver_later
+  end
+
+  def should_send_email_rejected?
+    # If it's not new, or if it's part of a recurring payment
+    (!saved_change_to_id? || recurring_donor) && status == "rejected" && saved_change_to_status?
+  end
+
+  def notify_email_rejected
+    if recurring_donor
+      NotificationMailer.with(transaction: self).recurring_fail.deliver_later
+    else
+      NotificationMailer.with(transaction: self).one_off_pending_rejected.deliver_later
+    end 
+  end
+
   def transaction_successful?
-    ['approved', 'Approved'].include?(status)
+    status == "approved"
   end
 
   def notify_webhooks
@@ -23,18 +57,5 @@ class Transaction < ApplicationRecord
     webhooks.each do |webhook|
       webhook.notify_transaction(self)
     end
-  end
-
-  def notify_email
-    if !recurring_donor
-      if transaction_successful?
-        NotificationMailer.with(transaction: self).one_off_success.deliver_later
-      end
-    else
-      # We only notify if a recurring donation fails
-      if !transaction_successful?
-        NotificationMailer.with(transaction: self).recurring_fail.deliver_later
-      end
-    end 
   end
 end

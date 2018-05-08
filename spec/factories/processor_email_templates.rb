@@ -9,8 +9,8 @@ FactoryBot.define do
 
     processor { FactoryBot.create(:stripe_processor) }
 
-    factory :one_off_success_email_template do 
-      email_type :one_off_success
+    factory :one_off_approved_email_template do 
+      email_type :one_off_approved
     end
 
     factory :one_off_fail_email_template do 

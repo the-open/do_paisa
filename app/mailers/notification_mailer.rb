@@ -2,8 +2,18 @@ class NotificationMailer < ApplicationMailer
   before_action :set_vars
   default from: 'notifications@example.com'
  
-  def one_off_success
-    return unless template = @processor.processor_email_templates.find_by(email_type: 'one_off_success')
+  def one_off_approved
+    return unless template = @processor.processor_email_templates.find_by(email_type: 'one_off_approved')
+    send_rendered(template, @vars)
+  end
+
+  def one_off_pending
+    return unless template = @processor.processor_email_templates.find_by(email_type: 'one_off_pending')
+    send_rendered(template, @vars)
+  end
+
+  def one_off_pending_rejected
+    return unless template = @processor.processor_email_templates.find_by(email_type: 'one_off_pending_rejected')
     send_rendered(template, @vars)
   end
 
