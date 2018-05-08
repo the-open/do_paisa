@@ -34,7 +34,7 @@ class StripeProcessor < Processor
       processor_id: id,
       amount: charge.amount,
       external_id: charge.id,
-      status: charge.status,
+      status: charge.status == 'succeeded' ? 'approved' : 'rejected',
       data: charge.to_json,
       donor: donor,
       source_system: options[:source]['system'] || donor.source_system,
