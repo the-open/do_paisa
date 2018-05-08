@@ -8,7 +8,7 @@ class IatsProcessor < Processor
         donor = response
       else
         return {
-          status: "failed",
+          status: "rejected",
           message: response
         }
       end
@@ -38,7 +38,7 @@ class IatsProcessor < Processor
       )
     else
       return {
-        status: 'Failed',
+        status: 'rejected',
         message: response[:authorizationresult]
       }
     end
@@ -58,7 +58,7 @@ class IatsProcessor < Processor
     {
       processor_transaction_id: response[:transaction_id],
       transaction_id: transaction.id,
-      status: 'success',
+      status: 'approved',
       amount: transaction.amount,
       donor_id: donor.id,
       recurring: transaction.recurring
