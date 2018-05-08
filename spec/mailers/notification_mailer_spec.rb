@@ -73,6 +73,32 @@ describe NotificationMailer do
     expect(email.subject).to eq "Thanks Jason" 
   end
 
+  it "sends correct email for one_off_pending" do 
+    template2 = @email_template.dup
+    template2.email_type = :recurring_start
+    template2.subject = "Wrong"
+    @email_template.processor.processor_email_templates << template2
+    @email_template.update_attributes(email_type: :one_off_pending)
+    
+    NotificationMailer.with(transaction: @stripe_processor.donors.first.transactions.first).one_off_pending.deliver_now
+    email = ActionMailer::Base.deliveries.last
+ 
+    expect(email.subject).to eq "Thanks Jason" 
+  end
+
+  it "sends correct email for one_off_pending_rejected" do 
+    template2 = @email_template.dup
+    template2.email_type = :recurring_start
+    template2.subject = "Wrong"
+    @email_template.processor.processor_email_templates << template2
+    @email_template.update_attributes(email_type: :one_off_pending_rejected)
+    
+    NotificationMailer.with(transaction: @stripe_processor.donors.first.transactions.first).one_off_pending_rejected.deliver_now
+    email = ActionMailer::Base.deliveries.last
+ 
+    expect(email.subject).to eq "Thanks Jason" 
+  end
+
   it "sends correct email for recurring_started" do 
     template2 = @email_template.dup
     template2.email_type = :recurring_fail
