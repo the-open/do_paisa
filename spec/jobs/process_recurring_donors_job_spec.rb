@@ -29,7 +29,7 @@ RSpec.describe ProcessRecurringDonorsJob, type: :job do
       processor: @stripe_processor,
       amount: 1000
       )
-    expect_any_instance_of(StripeProcessor).to receive(:process).with(hash_including(:recurring_donor_id => @today_donor.id)).and_return(status: 'success')
+    expect_any_instance_of(StripeProcessor).to receive(:process).with(hash_including(:recurring_donor_id => @today_donor.id)).and_return(status: 'approved')
     expect_any_instance_of(StripeProcessor).not_to receive(:process).with(hash_including(:recurring_donor_id => @yesterday_donor.id))
     expect_any_instance_of(StripeProcessor).not_to receive(:process).with(hash_including(:recurring_donor_id => @tomorrow_donor.id))
     
@@ -37,7 +37,7 @@ RSpec.describe ProcessRecurringDonorsJob, type: :job do
   end
 
   it "Shouldn't charge people twice if run multiple times in same day" do 
-    expect_any_instance_of(StripeProcessor).to receive(:process).exactly(1).times.with(hash_including(:recurring_donor_id => @today_donor.id)).and_return(status: 'success')
+    expect_any_instance_of(StripeProcessor).to receive(:process).exactly(1).times.with(hash_including(:recurring_donor_id => @today_donor.id)).and_return(status: 'approved')
 
     perform_enqueued_jobs { ProcessRecurringDonorsJob.perform_later }
     perform_enqueued_jobs { ProcessRecurringDonorsJob.perform_later }

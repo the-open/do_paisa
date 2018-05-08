@@ -59,7 +59,7 @@ class BamboraProcessor < Processor
   def recurring_donor?(options, transaction)
     options[:recurring] &&
       options[:recurring_donor_id].nil? &&
-      transaction.status.eql?('succeeded')
+      transaction.status.eql?('approved')
   end
 
   def add_donor(token, metadata = {}, source)

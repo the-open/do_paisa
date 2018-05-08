@@ -23,7 +23,7 @@ describe WebhookPayload do
       processor: @stripe_processor,
       donor: @donor,
       amount: 1045,
-      status: 'succeeded',
+      status: 'approved',
       external_id: SecureRandom.hex(32),
       source_system: 'act',
       source_external_id: '187',

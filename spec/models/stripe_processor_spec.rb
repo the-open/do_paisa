@@ -19,7 +19,7 @@ describe StripeProcessor do
 
       result = @stripe_processor.process(options)
 
-      expect(result[:status]).to eq('success')
+      expect(result[:status]).to eq('approved')
     end
 
     it "doesn't charge the same card twice with the same idempotency key" do 

@@ -7,12 +7,15 @@ class Transaction < ApplicationRecord
 
   validates_presence_of :amount, :external_id, :status, :processor_id
 
-  after_commit :notify_webhooks, if: :transaction_successful?, on: :create
   after_commit :notify_email, on: :create
-  after_save :notify_webhooks, if: :saved_change_to_status?
+  after_commit :notify_webhooks, if: :should_send_webhook?
+  
+  def should_send_webhook?
+    transaction_successful? && saved_change_to_status?
+  end
 
   def transaction_successful?
-    ['succeeded', 'Approved'].include?(status)
+    ['approved', 'Approved'].include?(status)
   end
 
   def notify_webhooks

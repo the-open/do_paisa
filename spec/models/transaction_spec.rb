@@ -7,7 +7,7 @@ describe Transaction do
       donor: @donor,
       processor: @stripe_processor,
       amount: 4201,
-      status: 'succeeded',
+      status: 'approved',
       external_id: SecureRandom.hex(32),
       source_system: 'act',
       source_external_id: '187'
@@ -16,7 +16,7 @@ describe Transaction do
       donor: @donor,
       processor: @stripe_processor,
       amount: 4201,
-      status: 'failed',
+      status: 'rejected',
       external_id: SecureRandom.hex(32),
       source_system: 'act',
       source_external_id: '187'
