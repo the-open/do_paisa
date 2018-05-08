@@ -77,7 +77,6 @@ class IatsProcessor < Processor
         transaction.update_attributes(
           status: transaction_data[:rst]
         )
-        # Fire webhook here?
       end
     end
   end
