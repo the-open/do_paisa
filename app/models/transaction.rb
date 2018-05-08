@@ -7,14 +7,10 @@ class Transaction < ApplicationRecord
 
   after_commit :notify_webhooks, if: :transaction_successful?, on: :create
   after_commit :notify_email, on: :create
-  after_save :notify_webhooks, if: :saved_changes_to_status?
+  after_save :notify_webhooks, if: :saved_change_to_status?
 
   def transaction_successful?
     ['succeeded', 'Approved'].include?(status)
-  end
-
-  def saved_changes_to_status?
-    ['ToBeSent', 'approved', 'reject', 'return'].include?(status)
   end
 
   def notify_webhooks
