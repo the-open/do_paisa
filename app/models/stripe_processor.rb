@@ -8,7 +8,7 @@ class StripeProcessor < Processor
         donor = response
       else
         return {
-          status: "failed",
+          status: "rejected",
           message: response
         }
       end

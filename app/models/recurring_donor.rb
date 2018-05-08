@@ -19,7 +19,7 @@ class RecurringDonor < ApplicationRecord
 
     if response[:status] == 'approved'
       acknowledge_successful_transaction
-    elsif response[:status] == 'failed' 
+    elsif response[:status] == 'rejected'
       acknowledge_failed_transaction(response[:message])
     end
   end
