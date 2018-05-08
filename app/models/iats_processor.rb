@@ -30,7 +30,7 @@ class IatsProcessor < Processor
         processor_id: id,
         amount: options[:amount],
         external_id: response[:transaction_id],
-        status: 'ToBeSent',
+        status: 'pending',
         data: response[:response],
         donor: donor,
         source_system: options[:source]['system'] || donor.source_system || 'unkown',
@@ -114,7 +114,7 @@ class IatsProcessor < Processor
   def recurring_donor?(options, transaction)
     options[:recurring] &&
       options[:recurring_donor_id].nil? &&
-      transaction.status == 'ToBeSent'
+      transaction.status == 'pending'
   end
 
   def add_donor(metadata = {}, source = {})
