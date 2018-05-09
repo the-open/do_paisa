@@ -74,9 +74,20 @@ class IatsProcessor < Processor
       )
 
       if transaction
-        transaction.update_attributes(
-          status: transaction_data[:rst]
-        )
+        case transaction_data[:rst]
+        when "OK:BankAccept"
+          transaction.update_attributes(
+            status: 'approved'
+          )
+        when /REJ/
+          transaction.update_attributes(
+            status: 'rejected'
+          )
+        when /Return/
+          transaction.update_attributes(
+            status: 'returned'
+          )
+        end
       end
     end
   end
