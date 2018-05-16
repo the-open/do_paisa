@@ -147,7 +147,7 @@ class IatsProcessor < Processor
         processor_id: id,
         external_id: response[:customercode],
         data: response[:response],
-        metadata: metadata.reject { |key, _| key.eql?(:account_number) },
+        metadata: metadata.reject { |key, _| key.eql?('account_number') },
         source_system: source[:system] || 'unknown',
         source_external_id: source[:external_id] || 'unknown'
       )

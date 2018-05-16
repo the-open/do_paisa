@@ -1,7 +1,8 @@
 class WebhookPayload
-  def initialize(system, transaction)
+  def initialize(system, transaction, processor)
     @system = system
     @transaction = transaction
+    @processor = processor
   end
 
   def get_payload
@@ -50,7 +51,8 @@ class WebhookPayload
       card_brand: 'unknown',
       source: "#{@transaction.source_external_id}|#{@transaction.source_system}",
       source_system: @transaction.source_system,
-      source_external_id: @transaction.source_external_id
+      source_external_id: @transaction.source_external_id,
+      medium: @processor.name
     }
 
     if @transaction.recurring_donor.present?

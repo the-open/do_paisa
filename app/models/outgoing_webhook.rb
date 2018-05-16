@@ -3,13 +3,13 @@
 class OutgoingWebhook < Webhook
   belongs_to :processor, optional: true
 
-  def notify_transaction(transaction)
-    payload = WebhookPayload.new(self.system, transaction).get_payload
+  def notify_transaction(transaction, processor)
+    payload = WebhookPayload.new(self.system, transaction, processor).get_payload
     post_payload(payload, url)
   end
 
-  def notify_recurring(recurring_donor)
-    payload = RecurringWebhookPayload.new(self.system, recurring_donor).get_payload
+  def notify_recurring(recurring_donor, processor)
+    payload = RecurringWebhookPayload.new(self.system, recurring_donor, processor).get_payload
     post_payload(payload, recurring_url)    
   end
 

@@ -174,9 +174,11 @@
       }
 
       .popover {
+        position: absolute;
         z-index: 10;
         margin-left: 20px;
         margin-top: 90px;
+        max-width: 200px;
       }
     </style>
   </head>
@@ -341,7 +343,8 @@
       $('#cvc-icon').popover({
         trigger: 'hover',
         container: 'body',
-        content: 'On MasterCard, and Visa credit and debit cards the security code is a three-digit card security code. The code is printed on the back of the card next to the signature panel of the card.'
+        html: true,
+        content: '<img src="https://s3.amazonaws.com/leadnow-identity/uploads/cvv.png" style="width:100%"/>'
       });
 
       function registerElements(elements, donationAmount, metadata, source, key, recurring) {

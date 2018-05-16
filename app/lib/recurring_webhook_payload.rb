@@ -1,7 +1,8 @@
 class RecurringWebhookPayload
-  def initialize(system, recurring_donor)
+  def initialize(system, recurring_donor, processor)
     @system = system
     @recurring_donor = recurring_donor
+    @processor = processor
   end
 
   def get_payload
@@ -39,7 +40,7 @@ class RecurringWebhookPayload
           }
         ]
       },
-      medium: 'do_paisa',
+      medium: @processor.name,
       external_id: @recurring_donor.id,
       started_at: @recurring_donor.created_at,
       current_amount: (@recurring_donor.amount / 100.to_f).round(2)

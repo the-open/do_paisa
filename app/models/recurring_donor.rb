@@ -55,7 +55,7 @@ class RecurringDonor < ApplicationRecord
   def notify_webhooks
     webhooks = OutgoingWebhook.where(processor_id: processor_id).or(OutgoingWebhook.where(processor_id: nil))
     webhooks.each do |webhook|
-      webhook.notify_recurring(self)
+      webhook.notify_recurring(self, self.processor)
     end
   end
 
