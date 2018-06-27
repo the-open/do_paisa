@@ -1,6 +1,6 @@
 class IatsProcessor < Processor
   def process(options)
-    donor = Donor.find_by(external_id: options[:token])
+    donor = Donor.find_by(external_id: options[:token]) if options[:token]
 
     if donor.nil?
       success, response = add_donor(options[:metadata], options[:source])

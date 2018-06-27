@@ -9,7 +9,7 @@ class RecurringDonor < ApplicationRecord
 
   def charge
     process_params = {
-      token: donor.token,
+      token: donor.external_id,
       amount: amount,
       recurring_donor_id: id,
       idempotency_key: Digest::MD5.hexdigest("#{donor_id}:#{Date.today.month}:#{consecutive_fail_count}")
