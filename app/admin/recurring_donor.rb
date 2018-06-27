@@ -1,5 +1,5 @@
 ActiveAdmin.register RecurringDonor do
-  config.sort_order = 'last_charged_at_desc'
+  config.sort_order = 'next_charge_at_desc'
   actions :all, :except => [:destroy]
   permit_params :next_charge_at, :ended_at, :amount
   

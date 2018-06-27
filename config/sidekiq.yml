@@ -2,8 +2,8 @@
   - default
   - mailers
 :schedule:
-  hello_world:
-    cron: '5,15,25,35,45,55 * * * * *'   # Runs once per minute
+  process_recurring_donor:
+    cron: '0 0-23 * * *'
     class: ProcessRecurringDonorsJob
   process_iats:
     cron: '0 18 * * * America/Toronto'

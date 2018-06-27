@@ -28,13 +28,13 @@ class IatsProcessor < Processor
     if success.include?('OK:')
       transaction = Transaction.create!(
         processor_id: id,
-        amount: options[:amount],
+        amount: '%.2f' % options[:amount].to_f.round(2),
         external_id: response[:transaction_id],
         status: 'pending',
         data: response[:response],
         donor: donor,
-        source_system: options[:source]['system'] || donor.source_system || 'unkown',
-        source_external_id: options[:source]['external_id'] || donor.source_external_id || 'unknown'
+        source_system: donor.source_system || 'unkown',
+        source_external_id: donor.source_external_id || 'unknown'
       )
     else
       return {
@@ -91,37 +91,7 @@ class IatsProcessor < Processor
       end
     end
   end
-
-  private
-
-  def get_transactions(date)
-    transactions_params = {
-      agent_code: api_key,
-      password: api_secret,
-      date: date.iso8601
-    }
-
-    approved_status, approved_transactions = IatsEft.get_transactions(transactions_params, 'approved')
-    reject_status, reject_transactions = IatsEft.get_transactions(transactions_params, 'reject')
-    return_status, return_transactions = IatsEft.get_transactions(transactions_params, 'return')
-
-    all_transactions = []
-
-    if approved_status && !approved_transactions.nil?
-      all_transactions += approved_transactions
-    end
-
-    if reject_status && !reject_transactions.nil?
-      all_transactions += reject_transactions
-    end
-
-    if return_status && !return_transactions.nil?
-      all_transactions += return_transactions
-    end
-
-    all_transactions
-  end
-
+  
   def recurring_donor?(options, transaction)
     options[:recurring] &&
       options[:recurring_donor_id].nil? &&
@@ -156,5 +126,35 @@ class IatsProcessor < Processor
     else
       return [false, "Failed to create customer token"]
     end
+  end
+
+  private
+
+  def get_transactions(date)
+    transactions_params = {
+      agent_code: api_key,
+      password: api_secret,
+      date: date.iso8601
+    }
+
+    approved_status, approved_transactions = IatsEft.get_transactions(transactions_params, 'approved')
+    reject_status, reject_transactions = IatsEft.get_transactions(transactions_params, 'reject')
+    return_status, return_transactions = IatsEft.get_transactions(transactions_params, 'return')
+
+    all_transactions = []
+
+    if approved_status && !approved_transactions.nil?
+      all_transactions += approved_transactions
+    end
+
+    if reject_status && !reject_transactions.nil?
+      all_transactions += reject_transactions
+    end
+
+    if return_status && !return_transactions.nil?
+      all_transactions += return_transactions
+    end
+
+    all_transactions
   end
 end

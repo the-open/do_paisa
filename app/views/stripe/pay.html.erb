@@ -211,7 +211,7 @@
 
 
     <script>
-      function saveTokenAndChargeCard(token, donationAmount, metadata, source, key, recurring) {
+      function saveTokenAndChargeCard(token, donationAmount, metadata, source, key, recurring, date) {
         var url = '<%= "#{pay_url(@processor)}?key=#{@api_user.key}" %>';
         var data = JSON.stringify({
           token: token.id,
@@ -219,7 +219,8 @@
           source: source,
           idempotency_key: key,
           amount: donationAmount,
-          recurring: recurring
+          recurring: recurring,
+          date: date
         });
 
         var request = new XMLHttpRequest();
@@ -364,13 +365,7 @@
       window.addEventListener("message", function(event) {
         var data = event.data;
         if (data.action === "submit") {
-          // console.log("donation amount: " + data.donationAmount);
-          // console.log(data.metadata);
-          // console.log(data.source);
-          // console.log("idempotency key: " + data.idempotency_key);
-          // console.log("recurring: " + data.recurring);
-          console.log("posting....")
-          registerElements([cardNumber, cardExpiry, cardCvc], data.donationAmount, data.metadata, data.source, data.idempotency_key, data.recurring);
+          registerElements([cardNumber, cardExpiry, cardCvc], data.donationAmount, data.metadata, data.source, data.idempotency_key, data.recurring, data.date);
         }
       }, false);
     </script>

@@ -32,7 +32,7 @@ class StripeProcessor < Processor
 
     transaction = Transaction.create!(
       processor_id: id,
-      amount: charge.amount,
+      amount: '%.2f' % (charge.amount / 100.to_f).round(2),
       external_id: charge.id,
       status: charge.status == 'succeeded' ? 'approved' : 'rejected',
       data: charge.to_json,
@@ -66,8 +66,6 @@ class StripeProcessor < Processor
   def process_webhook(params)
     puts params.inspect
   end
-
-  private
 
   def recurring_donor?(options, transaction)
     options[:recurring] &&

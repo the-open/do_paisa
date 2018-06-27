@@ -162,13 +162,14 @@
 
 
     <script>
-      function saveTokenAndChargeCard(metadata, source, amount, recurring) {
+      function saveTokenAndChargeCard(metadata, source, amount, recurring, date) {
         var url = '<%= "#{pay_url(@processor)}?key=#{@api_user.key}" %>';
         var data = JSON.stringify({
           metadata: metadata,
           source: source,
           amount: amount,
-          recurring: recurring
+          recurring: recurring,
+          date: date
         });
         
         var request = new XMLHttpRequest();
@@ -243,7 +244,7 @@
           var accountNum = bankNumber.val() + transitNumber.val() + accountNumber.val();
           data.metadata["account_number"] = accountNum;
           data.metadata["account_type"] = accountType.val();
-          saveTokenAndChargeCard(data.metadata, data.source, data.donationAmount, data.recurring);
+          saveTokenAndChargeCard(data.metadata, data.source, data.donationAmount, data.recurring, data.date);
         }
       }, false);
     </script>
