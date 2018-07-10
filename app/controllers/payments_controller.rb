@@ -28,7 +28,7 @@ class PaymentsController < ApiController
         process_params = {
           token: params[:token],
           amount: params[:amount],
-          metadata: params[:metadata],
+          metadata: params[:metadata].reject { |key, _| key.eql?('account_number') || key.eql?(:account_number) },
           source: params[:source],
           recurring: params[:recurring],
           idempotency_key: params[:idempotency_key]
