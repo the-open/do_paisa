@@ -43,7 +43,7 @@ class RecurringWebhookPayload
       medium: @processor.name,
       external_id: @recurring_donor.id,
       started_at: @recurring_donor.created_at,
-      current_amount: (@recurring_donor.amount / 100.to_f).round(2)
+      current_amount: (@recurring_donor.amount.to_f).round(2)
     }
   end
 end

@@ -47,7 +47,7 @@ class WebhookPayload
       postcode: @transaction.donor.metadata['address_zip'],
       country: @transaction.donor.metadata['address_country'],
       created_at: @transaction.created_at,
-      amount: (@transaction.amount / 100.to_f).round(2),
+      amount: (@transaction.amount.to_f).round(2),
       card_brand: 'unknown',
       source: "#{@transaction.source_external_id}|#{@transaction.source_system}",
       source_system: @transaction.source_system,
