@@ -176,6 +176,11 @@ GEM
     parallel (1.12.1)
     parser (2.5.1.0)
       ast (~> 2.4.0)
+    paypal-sdk-core (0.3.4)
+      multi_json (~> 1.0)
+      xml-simple
+    paypal-sdk-merchant (1.117.2)
+      paypal-sdk-core (~> 0.3.0)
     pg (0.21.0)
     polyamorous (1.3.3)
       activerecord (>= 3.0)
@@ -315,6 +320,7 @@ GEM
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.3)
+    xml-simple (1.1.5)
 
 PLATFORMS
   ruby
@@ -334,6 +340,7 @@ DEPENDENCIES
   newrelic_rpm
   omniauth (~> 1.6.1)
   omniauth-auth0 (~> 2.0.0)
+  paypal-sdk-merchant
   pg (~> 0.18)
   pry
   puma (~> 3.7)
