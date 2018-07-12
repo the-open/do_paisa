@@ -11,7 +11,7 @@ class PaymentsController < ApiController
     if request.post?
       if params[:date]
         success, donor = [true, Donor.find_by(external_id: params[:token])]
-        success, donor = @processor.add_donor(params[:metadata], params[:source]) unless donor
+        success, donor = @processor.add_donor(params[:token], params[:metadata], params[:source]) unless donor
 
         if success
           recurring_donor = @processor.add_recurring_donor(donor, params[:amount], Date.parse(params[:date]))

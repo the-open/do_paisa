@@ -3,7 +3,7 @@ class IatsProcessor < Processor
     donor = Donor.find_by(external_id: options[:token]) if options[:token]
 
     if donor.nil?
-      success, response = add_donor(options[:metadata], options[:source])
+      success, response = add_donor(nil, options[:metadata], options[:source])
       if success
         donor = response
       else
@@ -98,7 +98,7 @@ class IatsProcessor < Processor
       transaction.status == 'pending'
   end
 
-  def add_donor(metadata = {}, source = {})
+  def add_donor(_token, metadata = {}, source = {})
     metadata = metadata
     donor_params = {
       agent_code: api_key,
