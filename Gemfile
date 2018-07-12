@@ -33,6 +33,7 @@ gem 'omniauth-auth0', '~> 2.0.0'
 
 gem 'activeadmin'
 gem 'activemerchant'
+gem 'paypal-sdk-merchant'
 gem 'savon', '~> 2.12'
 gem 'stripe'
 
