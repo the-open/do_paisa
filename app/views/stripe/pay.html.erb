@@ -348,7 +348,7 @@
         content: '<img src="https://s3.amazonaws.com/leadnow-identity/uploads/cvv.png" style="width:100%"/>'
       });
 
-      function registerElements(elements, donationAmount, metadata, source, key, recurring) {
+      function registerElements(elements, donationAmount, metadata, source, key, recurring, date) {
         var form = document.getElementById('payment');
         var error = document.getElementById('card-errors');
 
@@ -357,7 +357,7 @@
             var errorElement = document.getElementById('card-errors');
             errorElement.textContent = result.error.message;
           } else {
-            saveTokenAndChargeCard(result.token, donationAmount, metadata, source, key, recurring);
+            saveTokenAndChargeCard(result.token, donationAmount, metadata, source, key, recurring, date);
           }
         });
       }

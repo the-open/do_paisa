@@ -3,7 +3,7 @@ def due_date(date)
   day > Date.today.strftime("%d") ? Date.parse(date) : Date.parse(date) + 1.month
 end
 
-def parse_csv(import_csv, processor_id)
+def parse_csv(import_csv, processor)
   CSV.foreach(import_csv, headers: true) do |row|
     options = {
       source: {
@@ -18,7 +18,6 @@ def parse_csv(import_csv, processor_id)
       },
       date: due_date(row['due_date'])
     }
-    processor = IatsProcessor.find_by(id: processor_id)
 
     success, donor = processor.add_donor(options[:metadata], options[:source])
 
@@ -33,5 +32,6 @@ end
 desc 'This task imports CAFT Donors from a CSV to the iATs processor'
 task :import_caft_from_csv, [:donors_csv, :processor_id] => :environment do |_, args|
   puts "Beginning import...\n"
-  parse_csv(args.donors_csv, args.processor_id)
+  processor = IatsProcessor.find_by(id: args.processor_id)
+  parse_csv(args.donors_csv, processor)
 end

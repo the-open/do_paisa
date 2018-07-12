@@ -74,13 +74,13 @@ class StripeProcessor < Processor
   end
 
   def add_donor(token, metadata = {}, source)
-    metadata = metadata.permit!.to_hash
+    metadata = metadata.permit!.to_hash unless metadata.empty?
     customer_params = {
       source: token,
       email: metadata['email'],
       metadata: metadata
     }
-    
+
     begin
       customer = Stripe::Customer.create(
         customer_params,
