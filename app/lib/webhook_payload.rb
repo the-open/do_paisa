@@ -55,10 +55,10 @@ class WebhookPayload
       medium: @processor.name
     }
 
-    if @transaction.recurring_donor.present?
+    if @transaction.recurring_donor_id
       payload.merge!({ 
         regular_donation_system: 'do_paisa',
-        regular_donation_external_id: @transaction.recurring_donor.id
+        regular_donation_external_id: @transaction.recurring_donor_id
       })
     end
 
