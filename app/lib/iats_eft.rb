@@ -57,7 +57,7 @@ class IatsEft
       agentCode: options[:agent_code],
       password: options[:password],
       customerCode: options[:external_id],
-      total: options[:amount]
+      total: (options[:amount] / 100)
     }
 
     response = client.call(

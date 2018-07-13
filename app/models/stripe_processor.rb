@@ -32,7 +32,7 @@ class StripeProcessor < Processor
 
     transaction = Transaction.create!(
       processor_id: id,
-      amount: '%.2f' % (charge.amount / 100.to_f).round(2),
+      amount: charge.amount,
       external_id: charge.id,
       status: charge.status == 'succeeded' ? 'approved' : 'rejected',
       data: charge.to_json,

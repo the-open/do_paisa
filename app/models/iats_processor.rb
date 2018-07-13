@@ -28,7 +28,7 @@ class IatsProcessor < Processor
     if success.include?('OK:')
       transaction = Transaction.create!(
         processor_id: id,
-        amount: '%.2f' % options[:amount].to_f.round(2),
+        amount: options[:amount],
         external_id: response[:transaction_id],
         status: 'pending',
         data: response[:response],
