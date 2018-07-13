@@ -15,7 +15,7 @@ def parse_csv(import_csv, processor)
         system: 'caft import'
       },
       recurring: true,
-      amount: row['amount'] * 100,
+      amount: row['amount'].to_i * 100,
       metadata: {
         first_name: row['first_name'],
         last_name: row['last_name'],
