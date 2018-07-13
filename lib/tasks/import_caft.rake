@@ -2,7 +2,7 @@ require 'open-uri'
 
 def due_date(date)
   caft_date = Date.parse(date)
-  caft_date > Date.today ? Date.parse(date) : Date.parse(Date.parse(date).strftime("%d") + "-" + Date.today.strftime("%m-%Y"))
+  caft_date > Date.today ? Date.parse(date) : Date.parse(Date.parse(date).strftime("%d") + "-" + (Date.today + 1.month).strftime("%m-%Y"))
 end
 
 def parse_csv(import_csv, processor)
