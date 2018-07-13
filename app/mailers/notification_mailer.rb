@@ -42,7 +42,7 @@ class NotificationMailer < ApplicationMailer
     end
 
     @email = @donor.metadata['email']
-    amount = '$' + '%.2f' % ((@transaction.try(:amount) / 100.to_f || @recurring_donor.try(:amount)) / 100.to_f)
+    amount = '$' + '%.2f' % ((@transaction.try(:amount) || @recurring_donor.try(:amount)).to_f / 100)
 
     @vars = {
       first_name: @donor.metadata['first_name'],
