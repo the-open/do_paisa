@@ -1,3 +1,5 @@
+require 'open-uri'
+
 def due_date(date)
   day = Date.parse(date).strftime("%d")
   day > Date.today.strftime("%d") ? Date.parse(date) : Date.parse(date) + 1.month
