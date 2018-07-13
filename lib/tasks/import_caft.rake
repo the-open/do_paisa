@@ -4,7 +4,10 @@ def due_date(date)
 end
 
 def parse_csv(import_csv, processor)
-  CSV.foreach(import_csv, headers: true) do |row|
+  csv_string = open(URI.encode(import_csv), 'r').read.force_encoding('UTF-8')
+  csv = CSV.parse(csv_string, headers: true)
+
+  csv.each do |row|
     options = {
       source: {
         system: 'caft import'
