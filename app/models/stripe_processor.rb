@@ -1,6 +1,6 @@
 class StripeProcessor < Processor
   def process(options)
-    donor = Donor.find_by(token: options[:token])
+    donor = Donor.find_by(external_id: options[:token])
 
     if donor.nil?
       success, response = add_donor(options[:token], options[:metadata], options[:source])
@@ -37,8 +37,8 @@ class StripeProcessor < Processor
       status: charge.status == 'succeeded' ? 'approved' : 'rejected',
       data: charge.to_json,
       donor: donor,
-      source_system: options[:source]['system'] || donor.source_system,
-      source_external_id: options[:source]['external_id'] || donor.source_external_id
+      source_system: options[:source].nil? ? donor.source_system : options[:source]['system'],
+      source_external_id: options[:source].nil? ? donor.source_external_id : options[:source]['external_id']
     )
 
     if recurring_donor?(options, transaction)
