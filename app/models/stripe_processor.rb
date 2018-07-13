@@ -30,7 +30,7 @@ class StripeProcessor < Processor
       charge_options
     )
 
-    transaction = Transaction.create!(
+    transaction = Transaction.new(
       processor_id: id,
       amount: charge.amount,
       external_id: charge.id,
@@ -47,11 +47,11 @@ class StripeProcessor < Processor
     end
 
     if options[:recurring_donor_id]
-      transaction.update_attributes(
-        recurring_donor_id: options[:recurring_donor_id],
-        recurring: true
-      )
+      transaction.recurring_donor_id = options[:recurring_donor_id]
+      transaction.recurring = true
     end
+
+    transaction.save!
 
     {
       processor_transaction_id: charge.id,
