@@ -24,7 +24,7 @@ def parse_csv(import_csv, processor)
       date: due_date(row['due_date'])
     }
 
-    success, donor = processor.add_donor(options[:metadata], options[:source])
+    success, donor = processor.add_donor("", options[:metadata], options[:source])
 
     if success
       processor.add_recurring_donor(donor, options[:amount], options[:date])
