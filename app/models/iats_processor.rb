@@ -67,27 +67,32 @@ class IatsProcessor < Processor
 
   def update_transactions_status(date)
     transactions = get_transactions(date)
+
     transactions.each do |transaction_data|
       transaction = Transaction.find_by(
         processor: self,
         external_id: transaction_data[:tnid]
       )
 
-      if transaction
-        case transaction_data[:rst]
-        when "OK:BankAccept"
-          transaction.update_attributes(
-            status: 'approved'
-          )
-        when /REJ/
-          transaction.update_attributes(
-            status: 'rejected'
-          )
-        when /Return/
-          transaction.update_attributes(
-            status: 'returned'
-          )
-        end
+      unless transaction
+        donor = Donor.find_by(processor: self, external_id: transaction_data[:cst][:cstc])
+        transaction = donor.transactions.first if donor
+      end
+
+      next if transaction.blank?
+      case transaction_data[:rst]
+      when "OK:BankAccept"
+        transaction.update_attributes(
+          status: 'approved'
+        )
+      when /REJ/
+        transaction.update_attributes(
+          status: 'rejected'
+        )
+      when /Return/
+        transaction.update_attributes(
+          status: 'returned'
+        )
       end
     end
   end
