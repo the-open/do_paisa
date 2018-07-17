@@ -19,6 +19,7 @@ def parse_csv(import_csv, processor)
       metadata: {
         first_name: row['first_name'],
         last_name: row['last_name'],
+        email: 'caft-import@leadnow.ca',
         account_number: row['route'] + row['transit'] + row['account_no']
       },
       date: due_date(row['due_date'])
