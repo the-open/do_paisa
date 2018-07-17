@@ -52,7 +52,8 @@ class WebhookPayload
       source: "#{@transaction.source_external_id}|#{@transaction.source_system}",
       source_system: @transaction.source_system,
       source_external_id: @transaction.source_external_id,
-      medium: @processor.name
+      medium: @processor.name,
+      status: @transaction.status
     }
 
     if @transaction.recurring_donor_id

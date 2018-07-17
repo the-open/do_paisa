@@ -14,7 +14,7 @@ class Transaction < ApplicationRecord
   after_commit :notify_webhooks, if: :should_send_webhook?
 
   def should_send_webhook?
-    transaction_successful? && saved_change_to_status?
+    (transaction_successful? || transaction_returned?) && saved_change_to_status?
   end
 
   def should_send_email_approved?
@@ -45,11 +45,15 @@ class Transaction < ApplicationRecord
       NotificationMailer.with(transaction: self).recurring_fail.deliver_later
     else
       NotificationMailer.with(transaction: self).one_off_pending_rejected.deliver_later
-    end 
+    end
   end
 
   def transaction_successful?
     status == "approved"
+  end
+
+  def transaction_returned?
+    status == 'returned'
   end
 
   def notify_webhooks

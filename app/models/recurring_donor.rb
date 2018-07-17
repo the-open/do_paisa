@@ -19,6 +19,8 @@ class RecurringDonor < ApplicationRecord
       acknowledge_successful_transaction
     elsif response[:status] == 'rejected'
       acknowledge_failed_transaction(response[:message])
+    elsif response[:status] == 'returned'
+      acknowledge_returned_transaction(response[:message])
     end
   end
 
@@ -47,6 +49,22 @@ class RecurringDonor < ApplicationRecord
         last_fail_reason: message
       )
       notify_webhooks
+    end
+  end
+
+  def acknowledge_returned_transaction(message)
+    codes = [60, 62, 63, 65, 72, 75, 77]
+    matcher = /Return:(\d*)/
+    return_code = message.scan(matcher).first.first.to_i
+    if codes.include?(return_code)
+      update_attributes!(
+        next_charge_at: nil,
+        ended_at: Time.now,
+        last_fail_reason: message
+      )
+      notify_webhooks
+    else
+      acknowledge_failed_transaction(message)
     end
   end
 
