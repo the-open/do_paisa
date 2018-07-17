@@ -1,8 +1,12 @@
 # frozen_string_literal: true
+require 'open-uri'
 
 namespace :en do
-  def create_donors(csv, processor)
-    CSV.foreach(csv, headers: true) do |row|
+  def create_donors(import_csv, processor)
+    csv_string = open(URI.encode(import_csv), 'r').read.force_encoding('UTF-8')
+    csv = CSV.parse(csv_string, headers: true)
+
+    csv.each do |row|
       token = row['Campaign Data 2']
 
       metadata = {
