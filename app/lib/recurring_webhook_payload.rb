@@ -27,7 +27,7 @@ class RecurringWebhookPayload
         firstname: @recurring_donor.donor.metadata['first_name'],
         lastname: @recurring_donor.donor.metadata['last_name'],
         emails: [
-          { email: @recurring_donor.donor.metadata['email'] }
+          { email: (@recurring_donor.donor.metadata['email'] || 'no-email@leadnow.ca') }
         ],
         addresses: [
           {
