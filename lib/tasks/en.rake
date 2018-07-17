@@ -21,7 +21,7 @@ namespace :en do
         external_id: row['Campaign ID']
       }
 
-      amount = row['Campaign Data 4']
+      amount = row['Campaign Data 4'].to_i * 100
 
       date = Date.parse(row['Campaign Data 16']) + 1.month
 

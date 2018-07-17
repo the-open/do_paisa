@@ -23,7 +23,7 @@ class PaypalProcessor < Processor
         PaymentDetails: {
           OrderTotal: {
             currencyID: currency,
-            value: options[:amount]
+            value: options[:amount].to_i / 100
           }
         }
       }
