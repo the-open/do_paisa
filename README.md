@@ -15,6 +15,33 @@ DoPaisa's name originates from India, where it was ideated, and built. Do means 
 
 * Stripe
 
+## Table of contents
+
+-   [Installation Steps](#installation-steps)
+-   [Contributing](#contributing)
+
+## Installation Steps:
+
+1. Clone the repo.
+
+```
+git clone git@github.com:the-open/do_paisa.git
+```
+
+1. Make sure you have `ruby 2.4.1` with `bundle`.
+If you have trouble installing 2.4.1,  see [this gist](https://gist.github.com/mattantonelli/71a45e8acfe442f86158598297845233)
+
+1.`bundle install`
+
+1.`bundle exec rails db:create`
+
+1.`bundle exec rails db:schema:load`
+
+1.`bundle exec rails s`
+
+
+This will start your server at localhost://3000/admin
+
 # Contributing:
 
 DoPaisa is an open source project and we encourage contributions. We feel that a welcoming community is important and we ask that you follow our [Code Of Conduct](https://github.com/the-open/do_paisa/blob/master/CODE_OF_CONDUCT.md) in all interactions with the community.
