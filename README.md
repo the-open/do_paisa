@@ -4,21 +4,14 @@ DoPaisa is a payment processor microservice that handles all the backend require
 
 DoPaisa's name originates from India, where it was ideated, and built. Do means two or give, and paisa is the smallest currency in India, and also means money. So DoPaisa translates to Give Money or Two Cents.
 
-## Features:
-
-* Multiple payment processors
-* Recurring Payments
-* One Click Donation Support
-
-
-## Payment Processors:
-
-* Stripe
 
 ## Table of contents
 
 -   [Installation Steps](#installation-steps)
+-   [Features](#features)
 -   [Contributing](#contributing)
+-   [Payment Processors](#payment-processors)
+
 
 ## Installation Steps:
 
@@ -40,7 +33,18 @@ If you have trouble installing 2.4.1,  see [this gist](https://gist.github.com/m
 1.`bundle exec rails s`
 
 
-This will start your server at localhost://3000/admin
+This will start your local server at localhost://3000/admin
+
+## Features:
+
+* Multiple payment processors
+* Recurring Payments
+* One Click Donation Support
+
+
+## Payment Processors:
+
+* Stripe
 
 # Contributing:
 
