@@ -86,10 +86,18 @@ class IatsProcessor < Processor
           status: 'approved'
         )
       when /REJ/
+        if transaction.recurring
+          recurring_donor = RecurringDonor.find_by(id: transaction.recurring_donor_id)
+          recurring_donor.acknowledge_failed_transaction(transaction_data[:rst])
+        end
         transaction.update_attributes(
           status: 'rejected'
         )
       when /Return/
+        if transaction.recurring
+          recurring_donor = RecurringDonor.find_by(id: transaction.recurring_donor_id)
+          recurring_donor.acknowledge_returned_transaction(transaction_data[:rst])
+        end
         transaction.update_attributes(
           status: 'returned'
         )

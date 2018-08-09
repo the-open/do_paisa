@@ -24,8 +24,6 @@ class RecurringDonor < ApplicationRecord
     end
   end
 
-  private
-
   def acknowledge_successful_transaction
     update_attributes!(
       last_charged_at: Date.today,
