@@ -3,7 +3,7 @@ class Transaction < ApplicationRecord
   belongs_to :recurring_donor, optional: true
   belongs_to :donor
 
-  enum status: { pending: 0, approved: 1, rejected: 2, returned: 3 }
+  enum status: { pending: 0, approved: 1, rejected: 2, returned: 3, refunded: 4 }
 
   validates_presence_of :amount, :external_id, :status, :processor_id
 

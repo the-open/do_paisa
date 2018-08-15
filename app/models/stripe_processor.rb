@@ -103,4 +103,30 @@ class StripeProcessor < Processor
 
     return [true, donor]
   end
+
+  def refund(token)
+    refund_params = { charge: token }
+    refund_options = { api_key: api_secret, stripe_version: "2018-02-06" }
+
+    refund = Stripe::Refund.create(
+      refund_params,
+      refund_options
+    )
+
+    transaction = Transaction.find_by(
+      processor: self,
+      external_id: token
+    )
+
+    if transaction.recurring
+      recurring_donor = RecurringDonor.find(transaction.recurring_donor_id)
+      recurring_donor.update_attributes(
+        ended_at: Time.now,
+        last_fail_reason: 'Refund'
+      )
+    end
+    transaction.update_attributes(
+      status: 'refunded'
+    )
+  end
 end
