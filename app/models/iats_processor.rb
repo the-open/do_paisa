@@ -159,6 +159,7 @@ class IatsProcessor < Processor
       if transaction.recurring
         recurring_donor = RecurringDonor.find(transaction.recurring_donor_id)
         recurring_donor.update_attributes(
+          next_charge_at: nil,
           ended_at: Time.now,
           last_fail_reason: 'Refund'
         )

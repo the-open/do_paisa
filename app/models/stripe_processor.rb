@@ -126,7 +126,8 @@ class StripeProcessor < Processor
       )
     end
     transaction.update_attributes(
-      status: 'refunded'
+      status: 'refunded',
+      data: refund.to_json
     )
   end
 end
