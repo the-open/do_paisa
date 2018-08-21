@@ -14,7 +14,9 @@ class Transaction < ApplicationRecord
   after_commit :notify_webhooks, if: :should_send_webhook?
 
   def should_send_webhook?
-    (transaction_successful? || transaction_returned?) && saved_change_to_status?
+    if processor.type != "PaypalProcessor"
+      (transaction_successful? || transaction_returned?) && saved_change_to_status?
+    end
   end
 
   def should_send_email_approved?
@@ -25,14 +27,16 @@ class Transaction < ApplicationRecord
     if !recurring_donor
       NotificationMailer.with(transaction: self).one_off_approved.deliver_later
     end
-  end 
+  end
 
   def should_send_email_pending?
     status == "pending" && saved_change_to_id?
   end
 
   def notify_email_pending
-    NotificationMailer.with(transaction: self).one_off_pending.deliver_later
+    if !recurring_donor
+      NotificationMailer.with(transaction: self).one_off_pending.deliver_later
+    end
   end
 
   def should_send_email_rejected?
