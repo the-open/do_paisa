@@ -23,7 +23,8 @@ class PaypalProcessor < Processor
         PaymentDetails: {
           OrderTotal: {
             currencyID: currency,
-            value: options[:amount].to_i / 100
+            value: options[:amount].to_i / 100,
+            custom: options[:custom]
           }
         }
       }
@@ -42,7 +43,7 @@ class PaypalProcessor < Processor
 
     transaction = Transaction.create!(
       processor_id: id,
-      amount: transaction_details.amount.value,
+      amount: transaction_details.amount.value * 100,
       external_id: transaction_details.transaction_id,
       status: 'approved',
       data: response.to_hash.to_json,
