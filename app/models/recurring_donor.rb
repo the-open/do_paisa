@@ -14,7 +14,11 @@ class RecurringDonor < ApplicationRecord
       recurring_donor_id: id,
       idempotency_key: Digest::MD5.hexdigest("#{donor_id}:#{Date.today.month}:#{consecutive_fail_count}")
     }
-    process_params[:custom] = (donor.source_external_id + '|MONTHLY') if processor.type == 'PaypalProcessor'
+    if processor.type == 'PaypalProcessor'
+      process_params[:custom] = (donor.source_external_id + '|MONTHLY')
+      process_params[:invoice_id] = donor.metadata['en_id']
+      process_params[:order_description] = donor.metadata['email']
+    end
     response = processor.process(process_params)
     if response[:status] == 'approved'
       acknowledge_successful_transaction

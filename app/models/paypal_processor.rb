@@ -25,7 +25,9 @@ class PaypalProcessor < Processor
             currencyID: currency,
             value: options[:amount].to_i / 100
           },
-          Custom: options[:custom]
+          Custom: options[:custom],
+          InvoiceID: options[:invoice_id],
+          OrderDescription: options[:order_description]
         }
       }
     )
