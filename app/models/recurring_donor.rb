@@ -20,6 +20,7 @@ class RecurringDonor < ApplicationRecord
       process_params[:order_description] = donor.metadata['email']
     end
     response = processor.process(process_params)
+    Rollbar.error(response) and return if response.nil?
     if response[:status] == 'approved'
       acknowledge_successful_transaction
     elsif response[:status] == 'rejected'
