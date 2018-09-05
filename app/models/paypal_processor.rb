@@ -35,9 +35,9 @@ class PaypalProcessor < Processor
     response = client.do_reference_transaction(charge_params)
 
     if response.errors.any?
-      Rollbar.error(response.Errors)
+      Rollbar.error(response.errors)
       puts 'Failed to process transaction'
-      puts response.Errors
+      puts response
       return
     end
 
