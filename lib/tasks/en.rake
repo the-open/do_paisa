@@ -25,11 +25,7 @@ namespace :en do
 
       process_day = Date.parse(row['Date Created']).day
       current_day = Date.today.day
-      if process_day <= current_day
-        date = Date.parse(row['Date Created']) + 2.month
-      else
-        date = Date.parse(row['Date Created']) + 1.month
-      end
+      date = process_day <= current_day ? Date.parse(row['Date Created']) + 2.month : Date.parse(row['Date Created']) + 1.month
 
       processor.add_donor(token, metadata, source, amount, date)
 
