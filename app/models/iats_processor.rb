@@ -26,7 +26,7 @@ class IatsProcessor < Processor
     success = response[:authorizationresult]
     transaction = nil
     if success.include?('OK:')
-      transaction = Transaction.create!(
+      transaction = Transaction.new(
         processor_id: id,
         amount: options[:amount],
         external_id: response[:transaction_id],
@@ -54,6 +54,8 @@ class IatsProcessor < Processor
         recurring: true
       )
     end
+
+    transaction.save!
 
     {
       processor_transaction_id: response[:transaction_id],
