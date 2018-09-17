@@ -49,8 +49,8 @@ class IatsProcessor < Processor
     end
 
     if options[:recurring_donor_id]
-      transaction.recurring_donor_id: options[:recurring_donor_id]
-      transaction.recurring: true
+      transaction.recurring_donor_id = options[:recurring_donor_id]
+      transaction.recurring = true
       )
     end
 
