@@ -140,6 +140,37 @@ class IatsProcessor < Processor
     end
   end
 
+  def refund(token)
+    transaction = Transaction.find_by(
+      processor: self,
+      external_id: token
+    )
+
+    refund_params = {
+      agent_code: api_key,
+      password: api_secret,
+      external_id: transaction.external_id,
+      amount: transaction.amount
+    }
+
+    response = IatsEft.refund_transaction(refund_params)
+
+    if response[:success]
+      if transaction.recurring
+        recurring_donor = RecurringDonor.find(transaction.recurring_donor_id)
+        recurring_donor.update_attributes(
+          next_charge_at: nil,
+          ended_at: Time.now,
+          last_fail_reason: 'Refund'
+        )
+      end
+      transaction.update_attributes(
+        status: 'refunded',
+        data: response[:response]
+      )
+    end
+  end
+
   private
 
   def get_transactions(date)

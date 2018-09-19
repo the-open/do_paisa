@@ -97,6 +97,49 @@ class IatsEft
     parse_response(response.body, type)
   end
 
+  def self.refund_transaction(options)
+    client = Savon.client(
+      wsdl: 'https://www.iatspayments.com/netgate/ProcessLinkv2.asmx?WSDL',
+      soap_version: 2
+    )
+
+    request_params = {
+      agentCode: options[:agent_code],
+      password: options[:password],
+      transactionId: options[:external_id],
+      total: (-options[:amount] / 100),
+      comment: options[:external_id]
+    }
+
+    response = client.call(
+      :process_acheft_refund_with_transaction_id,
+      message: request_params
+    )
+
+    if response.success?
+      iatsresponse = response.body[:process_acheft_refund_with_transaction_id_response][:process_acheft_refund_with_transaction_id_result][:iatsresponse]
+      errors = iatsresponse[:errors]
+      if errors.nil? && iatsresponse[:processresult][:authorizationresult].include?('OK')
+        processresult = iatsresponse[:processresult]
+        return {
+          authorizationresult: processresult[:authorizationresult],
+          response: response.body.to_json,
+          success: true
+        }
+      else
+        return {
+          authorizationresult: iatsresponse[:processresult][:authorizationresult],
+          response: response.body.to_json,
+          success: false
+        }
+      end
+    else
+      return {
+        success: false
+      }
+    end
+  end
+
   class << self
     private
 

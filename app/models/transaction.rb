@@ -3,7 +3,7 @@ class Transaction < ApplicationRecord
   belongs_to :recurring_donor, optional: true
   belongs_to :donor
 
-  enum status: { pending: 0, approved: 1, rejected: 2, returned: 3 }
+  enum status: { pending: 0, approved: 1, rejected: 2, returned: 3, refunded: 4 }
 
   validates_presence_of :amount, :external_id, :status, :processor_id
 
@@ -14,7 +14,7 @@ class Transaction < ApplicationRecord
   after_commit :notify_webhooks, if: :should_send_webhook?
 
   def should_send_webhook?
-    (transaction_successful? || transaction_returned?) && saved_change_to_status?
+    (transaction_successful? || transaction_returned_or_refunded?) && saved_change_to_status?
   end
 
   def should_send_email_approved?
@@ -54,8 +54,8 @@ class Transaction < ApplicationRecord
     status == "approved"
   end
 
-  def transaction_returned?
-    status == 'returned'
+  def transaction_returned_or_refunded?
+    ['returned', 'refunded'].include? status
   end
 
   def notify_webhooks
