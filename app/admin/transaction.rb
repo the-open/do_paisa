@@ -10,7 +10,9 @@ ActiveAdmin.register Transaction do
     processor.refund(resource.external_id)
     redirect_to admin_transaction_path, notice: "Transaction has been refunded"
   end
-  action_item :refund, :only => [:show] , :if => proc { transaction.status != 'refunded' } do
+  action_item :refund, :only => [:show] , :if => proc {
+    transaction.status == 'approved' && transaction.processor.type != 'PaypalProcessor'
+    } do
     link_to "Refund Transaction", refund_admin_transaction_path(transaction), method: :put
   end
 end
