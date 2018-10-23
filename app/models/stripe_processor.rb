@@ -25,10 +25,20 @@ class StripeProcessor < Processor
       charge_options[:idempotency_key] = options[:idempotency_key]
     end
 
-    charge = Stripe::Charge.create(
-      charge_params,
-      charge_options
-    )
+    begin
+      puts "charging now"
+      charge = Stripe::Charge.create(
+        charge_params,
+        charge_options
+      )
+    rescue Stripe::CardError => e
+      body = e.json_body
+      err  = body[:error]
+      return {
+        status: 'rejected',
+        message: err[:code] + ', Decline Code: ' + err[:decline_code]
+      }
+    end
 
     transaction = Transaction.new(
       processor_id: id,
