@@ -20,8 +20,9 @@ class PaymentsController < ApiController
             date: recurring_donor.next_charge_at.strftime("%d-%m-%Y")
           }
         else
-          return {
-            error: "This is a fail"
+          render json: {
+            status: "rejected",
+            message: donor
           }
         end
       else
