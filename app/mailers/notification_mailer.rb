@@ -52,7 +52,7 @@ class NotificationMailer < ApplicationMailer
     }
 
     if @recurring_donor.present?
-      @vars.merge!(@recurring_donor.attributes.slice(:last_fail_reason, :next_charge_at))
+      @vars.merge!(@recurring_donor.attributes.symbolize_keys.slice(:last_fail_reason, :next_charge_at))
     end
   end
 

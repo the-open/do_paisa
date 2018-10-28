@@ -26,7 +26,6 @@ class StripeProcessor < Processor
     end
 
     begin
-      puts "charging now"
       charge = Stripe::Charge.create(
         charge_params,
         charge_options
