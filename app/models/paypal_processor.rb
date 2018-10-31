@@ -34,10 +34,11 @@ class PaypalProcessor < Processor
     response = client.do_reference_transaction(charge_params)
 
     if response.errors.any?
-      Rollbar.error(response.errors)
-      puts 'Failed to process transaction'
-      puts response
-      return
+      Rollbar.error("#{response.errors[0].short_message} - #{response.errors[0].long_message}: #{donor.metadata}, #{donor.id}")
+      return {
+        status: 'rejected',
+        message: "#{response.errors[0].short_message} - #{response.errors[0].long_message}"
+      }
     end
 
     transaction_details = response.do_reference_transaction_response_details
