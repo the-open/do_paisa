@@ -1,7 +1,7 @@
 ActiveAdmin.register RecurringDonor do
   config.sort_order = 'next_charge_at_desc'
   actions :all, :except => [:destroy]
-  permit_params :next_charge_at, :ended_at, :amount
+  permit_params :ended_at
   
   preserve_default_filters!
   remove_filter :donor
@@ -13,16 +13,10 @@ ActiveAdmin.register RecurringDonor do
 
   form do |f|
     f.inputs do
-      f.input :amount
       f.input :ended_at, as: :datepicker,
                         datepicker_options: {
                           min_date: "Date.today.to_s",
                           max_date: "+3Y"
-                        }
-      f.input :next_charge_at, as: :datepicker,
-                        datepicker_options: {
-                          min_date: :next_charge_at,
-                          max_date: "+1Y"
                         }
     end
     f.actions
