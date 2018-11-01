@@ -4,7 +4,7 @@ class RecurringDonor < ApplicationRecord
   belongs_to :donor
 
   validates_presence_of :amount, :donor_id, :processor_id
-  after_commit :notify_webhooks, on: :create
+  after_commit :notify_webhooks, on: [:create, :update]
   after_commit :notify_email, on: :create
 
   def charge
