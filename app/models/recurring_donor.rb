@@ -52,6 +52,7 @@ class RecurringDonor < ApplicationRecord
         last_fail_reason: message
       )
       notify_webhooks
+      post_to_slack(message)
     end
   end
 
@@ -66,6 +67,7 @@ class RecurringDonor < ApplicationRecord
         last_fail_reason: message
       )
       notify_webhooks
+      post_to_slack(message)
     else
       acknowledge_failed_transaction(message)
     end
@@ -80,5 +82,9 @@ class RecurringDonor < ApplicationRecord
 
   def notify_email
     NotificationMailer.with(recurring_donor: self).recurring_started.deliver_later
+  end
+
+  def post_to_slack(message)
+    Slack.new.post_message "Recurring #{self.processor.name} donation with id: #{self.id} from #{self.donor.metadata['email']} has failed: \n #{message}"
   end
 end

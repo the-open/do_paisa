@@ -25,6 +25,7 @@ class Transaction < ApplicationRecord
     if !recurring_donor
       NotificationMailer.with(transaction: self).one_off_approved.deliver_later
     end
+    post_to_slack
   end
 
   def should_send_email_pending?
@@ -62,6 +63,12 @@ class Transaction < ApplicationRecord
     webhooks = OutgoingWebhook.where(processor_id: processor_id).or(OutgoingWebhook.where(processor_id: nil))
     webhooks.each do |webhook|
       webhook.notify_transaction(self, self.processor)
+    end
+  end
+
+  def post_to_slack
+    if self.amount >= 50000
+      Slack.new.post_message ":rotating_light: \t :rotating_light: \t :rotating_light: \t :rotating_light: \n A $#{self.amount/100} donation with transaction id: #{self.id} from #{self.donor.metadata['email']} has just been made \n :rotating_light: \t :rotating_light: \t :rotating_light: \t :rotating_light:"
     end
   end
 end
