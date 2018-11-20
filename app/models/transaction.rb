@@ -68,7 +68,7 @@ class Transaction < ApplicationRecord
 
   def post_to_slack
     if self.amount >= 50000
-      Slack.new.post_message ":rotating_light: \t :rotating_light: \t :rotating_light: \t :rotating_light: \n A $#{self.amount/100} donation with transaction id: #{self.id} from #{self.donor.metadata['email']} has just been made \n :rotating_light: \t :rotating_light: \t :rotating_light: \t :rotating_light:"
+      Slack.new.post_message ":rotating_light: \t :rotating_light: \t :rotating_light: \t :rotating_light: \n <!channel> A $#{self.amount/100} donation with transaction id: #{self.id} from #{self.donor.metadata['email']} has just been made \n :rotating_light: \t :rotating_light: \t :rotating_light: \t :rotating_light:"
     end
   end
 end
