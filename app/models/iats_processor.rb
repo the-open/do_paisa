@@ -79,9 +79,10 @@ class IatsProcessor < Processor
         transaction = donor.transactions.first if donor
       end
 
-      next if transaction.blank?
+      next if transaction.blank? || ['returned','rejected'].include?(transaction.status)
+
       case transaction_data[:rst]
-      when "OK:BankAccept"
+      when 'OK:BankAccept'
         transaction.update_attributes(
           status: 'approved'
         )

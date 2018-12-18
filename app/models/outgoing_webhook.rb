@@ -10,7 +10,7 @@ class OutgoingWebhook < Webhook
 
   def notify_recurring(recurring_donor, processor)
     payload = RecurringWebhookPayload.new(self.system, recurring_donor, processor).get_payload
-    post_payload(payload, recurring_url)    
+    post_payload(payload, recurring_url)
   end
 
   def post_payload(payload, api_url)

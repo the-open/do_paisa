@@ -4,8 +4,8 @@ class RecurringDonor < ApplicationRecord
   belongs_to :donor
 
   validates_presence_of :amount, :donor_id, :processor_id
-  after_commit :notify_webhooks, on: [:create, :update]
   after_commit :notify_email, on: :create
+  after_commit :notify_webhooks, if: :should_send_webhook?
 
   def charge
     process_params = {
@@ -27,6 +27,10 @@ class RecurringDonor < ApplicationRecord
     elsif response[:status] == 'returned'
       acknowledge_returned_transaction(response[:message])
     end
+  end
+
+  def should_send_webhook?
+    saved_change_to_id? || saved_change_to_ended_at?
   end
 
   def acknowledge_successful_transaction
@@ -51,7 +55,6 @@ class RecurringDonor < ApplicationRecord
         consecutive_fail_count: consecutive_fail_count + 1,
         last_fail_reason: message
       )
-      notify_webhooks
       post_to_slack(message)
     end
   end
@@ -66,7 +69,6 @@ class RecurringDonor < ApplicationRecord
         ended_at: Time.now,
         last_fail_reason: message
       )
-      notify_webhooks
       post_to_slack(message)
     else
       acknowledge_failed_transaction(message)
