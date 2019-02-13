@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180508141036) do
+ActiveRecord::Schema.define(version: 20190212192301) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -99,6 +99,7 @@ ActiveRecord::Schema.define(version: 20180508141036) do
     t.integer "consecutive_fail_count", default: 0, null: false
     t.datetime "ended_at"
     t.text "last_fail_reason"
+    t.string "cancelled_reason"
   end
 
   create_table "settings", force: :cascade do |t|
