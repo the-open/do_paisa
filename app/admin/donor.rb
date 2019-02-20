@@ -19,7 +19,7 @@ ActiveAdmin.register Donor do
       donor.metadata['email']
     end
     column :name do |donor|
-      donor.metadata['first_name'] + " " + donor.metadata['last_name']
+      donor.metadata['first_name'].present? ? "#{donor.metadata['first_name']} #{donor.metadata['last_name']}" : 'No name found'
     end
     actions
   end
