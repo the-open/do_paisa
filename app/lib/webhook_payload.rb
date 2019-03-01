@@ -56,6 +56,11 @@ class WebhookPayload
       status: @transaction.status
     }
 
+    if @transaction.donor.metadata['po_guid'].present?
+      source = "#{@transaction.source_external_id} - #{@transaction.donor.metadata['po_guid']}"
+      payload[:source] = source
+    end
+
     if @transaction.recurring_donor_id
       payload.merge!({ 
         regular_donation_system: @processor.name,

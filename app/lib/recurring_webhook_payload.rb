@@ -21,7 +21,7 @@ class RecurringWebhookPayload
   end
 
   def identity_payload
-    {
+    payload = {
       api_token: Rails.application.secrets.identity_api_token,
       cons_hash: {
         firstname: @recurring_donor.donor.metadata['first_name'],
@@ -41,11 +41,21 @@ class RecurringWebhookPayload
         ]
       },
       medium: @processor.name,
+      frequency: 'Monthly',
+      source: @recurring_donor.donor.source_external_id,
       external_id: @recurring_donor.id,
       started_at: @recurring_donor.created_at,
       updated_at: @recurring_donor.updated_at,
       current_amount: '%.2f' % (@recurring_donor.amount / 100.to_f).round(2),
       ended_at: @recurring_donor.ended_at
     }
+
+    if @recurring_donor.donor.metadata['po_guid'].present?
+      payload.merge!({
+        source: @recurring_donor.donor.metadata['po_guid']
+      })
+    end
+
+    payload
   end
 end
