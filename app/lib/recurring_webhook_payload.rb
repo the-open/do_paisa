@@ -56,6 +56,13 @@ class RecurringWebhookPayload
       })
     end
 
+    ended_reason = @recurring_donor.last_fail_reason.present? ? @recurring_donor.last_fail_reason : @recurring_donor.cancelled_reason
+    if @recurring_donor.ended_at.present? && ended_reason
+      payload.merge!({
+        ended_reason: ended_reason
+      })
+    end
+
     payload
   end
 end
