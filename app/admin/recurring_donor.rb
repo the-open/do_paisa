@@ -70,7 +70,7 @@ ActiveAdmin.register RecurringDonor do
   sidebar "Donor Details", only: :show do
     attributes_table_for recurring_donor.donor do
       row('Email') { |d| d.metadata['email'] }
-      row('Name') { |d| d.metadata['first_name'] + ' ' + d.metadata['last_name'] }
+      row('Name') { |d| "#{d.metadata['first_name']} #{d.metadata['last_name']}" }
       row('Donor ID') { |d| link_to(d.id, admin_donor_path(d)) }
     end
   end
