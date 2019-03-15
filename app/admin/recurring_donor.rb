@@ -1,7 +1,7 @@
 ActiveAdmin.register RecurringDonor do
   config.sort_order = 'next_charge_at_desc'
   actions :all, :except => [:new, :destroy]
-  permit_params :ended_at, :cancelled_reason
+  permit_params :amount, :next_charge_at, :ended_at, :cancelled_reason
   
   filter :donor_email_cont, label: 'DONOR EMAIL', as: :string
   filter :donor_first_name_cont, label: 'DONOR FIRST NAME', as: :string
@@ -27,6 +27,11 @@ ActiveAdmin.register RecurringDonor do
 
   form do |f|
     f.inputs do
+      f.input :amount, label: "Amount in cents"
+      f.input :next_charge_at, as: :datepicker,
+                               datepicker_options: {
+                                min_date: Date.today + 1
+                               }
       f.input :ended_at, as: :datepicker
       f.input :cancelled_reason, :as => :select, required: true, collection: [
         "Can't afford to donate", 
