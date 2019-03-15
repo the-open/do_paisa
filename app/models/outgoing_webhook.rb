@@ -13,6 +13,11 @@ class OutgoingWebhook < Webhook
     post_payload(payload, recurring_url)
   end
 
+  def notify_paypal(recurring_donor, processor)
+    payload = PaypalWebhookPayload.new(self.system, recurring_donor, processor).get_payload
+    post_payload(payload, recurring_url)
+  end
+
   def post_payload(payload, api_url)
     json_payload = payload.to_json
 

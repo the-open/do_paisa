@@ -6,6 +6,7 @@ class RecurringDonor < ApplicationRecord
   validates_presence_of :amount, :donor_id, :processor_id
   after_commit :notify_email, on: :create
   after_commit :notify_webhooks, if: :should_send_webhook?
+  after_commit :notify_paypal_webhooks, if: :should_send_paypal_webhook?
 
   def charge
     process_params = {
@@ -30,7 +31,13 @@ class RecurringDonor < ApplicationRecord
   end
 
   def should_send_webhook?
+    return if processor.type == "PaypalProcessor"
     saved_change_to_id? || saved_change_to_ended_at?
+  end
+
+  def should_send_paypal_webhook?
+    return unless processor.type == "PaypalProcessor"
+    saved_change_to_ended_at?
   end
 
   def acknowledge_successful_transaction
@@ -79,6 +86,13 @@ class RecurringDonor < ApplicationRecord
     webhooks = OutgoingWebhook.where(processor_id: processor_id).or(OutgoingWebhook.where(processor_id: nil))
     webhooks.each do |webhook|
       webhook.notify_recurring(self, self.processor)
+    end
+  end
+
+  def notify_paypal_webhooks
+    webhooks = OutgoingWebhook.where(processor_id: processor_id).or(OutgoingWebhook.where(processor_id: nil))
+    webhooks.each do |webhook|
+      webhook.notify_paypal(self, self.processor)
     end
   end
 
