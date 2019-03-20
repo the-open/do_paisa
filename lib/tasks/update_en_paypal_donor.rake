@@ -2,7 +2,7 @@
 require 'open-uri'
 
 def update_donors(csv)
-  csv_string = open(URI.encode(import_csv), 'r').read.force_encoding('UTF-8')
+  csv_string = open(URI.encode(csv), 'r').read.force_encoding('UTF-8')
   csv = CSV.parse(csv_string, headers: true)
 
   csv.each do |row|
