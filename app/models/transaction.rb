@@ -14,6 +14,7 @@ class Transaction < ApplicationRecord
   after_commit :notify_webhooks, if: :should_send_webhook?
 
   def should_send_webhook?
+    return if processor.type == "PaypalProcessor"
     (transaction_successful? || transaction_returned_or_refunded?) && saved_change_to_status?
   end
 
