@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
 
+  # Return 404 at root path
+  get '/', to: proc { [404, {}, ['']] }
+
   # Auth0
   get '/auth/auth0/callback' => 'auth0#callback'
   get '/auth/failure'        => 'auth0#failure'
