@@ -4,11 +4,11 @@ class StripeProcessor < Processor
 
     if donor.nil?
       success, response = add_donor(options[:token], options[:metadata], options[:source])
-      if success 
+      if success
         donor = response
       else
         return {
-          status: "rejected",
+          status: 'rejected',
           message: response
         }
       end
@@ -20,7 +20,7 @@ class StripeProcessor < Processor
       customer: donor.external_id
     }
 
-    charge_options = { api_key: api_secret, stripe_version: "2018-02-06" }
+    charge_options = { api_key: api_secret, stripe_version: '2018-02-06' }
     if options[:idempotency_key].present?
       charge_options[:idempotency_key] = options[:idempotency_key]
     end
@@ -35,7 +35,8 @@ class StripeProcessor < Processor
       err  = body[:error]
       return {
         status: 'rejected',
-        message: err[:code] + ', Decline Code: ' + err[:decline_code]
+        # Using string interpolation to avoid "no implicit conversion of nil into String" errors if one of these values is nil.
+        message: "#{err[:code]}, Decline Code: #{err[:decline_code]}"
       }
     end
 
@@ -65,7 +66,7 @@ class StripeProcessor < Processor
     {
       processor_transaction_id: charge.id,
       transaction_id: transaction.id,
-      status: "approved",
+      status: 'approved',
       amount: transaction.amount,
       donor_id: donor.id,
       recurring: transaction.recurring
@@ -98,7 +99,6 @@ class StripeProcessor < Processor
     rescue Stripe::CardError => e
       return [false, e.message]
     end
-      
 
     donor = Donor.create!(
       token: token,
@@ -110,12 +110,12 @@ class StripeProcessor < Processor
       source_external_id: source['external_id'] || 'unknown'
     )
 
-    return [true, donor]
+    [true, donor]
   end
 
   def refund(token)
     refund_params = { charge: token }
-    refund_options = { api_key: api_secret, stripe_version: "2018-02-06" }
+    refund_options = { api_key: api_secret, stripe_version: '2018-02-06' }
 
     refund = Stripe::Refund.create(
       refund_params,
@@ -129,12 +129,12 @@ class StripeProcessor < Processor
 
     if transaction.recurring
       recurring_donor = RecurringDonor.find(transaction.recurring_donor_id)
-      recurring_donor.update_attributes(
+      recurring_donor.update(
         ended_at: Time.now,
         last_fail_reason: 'Refund'
       )
     end
-    transaction.update_attributes(
+    transaction.update(
       status: 'refunded',
       data: refund.to_json
     )
