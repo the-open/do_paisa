@@ -1,8 +1,8 @@
 ActiveAdmin.register RecurringDonor do
   config.sort_order = 'next_charge_at_desc'
-  actions :all, :except => [:new, :destroy]
+  actions :all, except: %i[new destroy]
   permit_params :amount, :next_charge_at, :ended_at, :cancelled_reason
-  
+
   filter :donor_email_cont, label: 'DONOR EMAIL', as: :string
   filter :donor_first_name_cont, label: 'DONOR FIRST NAME', as: :string
   filter :donor_last_name_cont, label: 'DONOR LAST NAME', as: :string
@@ -12,11 +12,11 @@ ActiveAdmin.register RecurringDonor do
   index do
     column :id do |recurring_donor|
       link_to(recurring_donor.id, admin_recurring_donor_path(recurring_donor))
-    end 
+    end
     column :donor
     column :processor
     column :amount do |amount|
-      number_to_currency(amount.amount/100)
+      number_to_currency(amount.amount / 100)
     end
     column :last_charged_at
     column :next_charge_at
@@ -27,25 +27,24 @@ ActiveAdmin.register RecurringDonor do
 
   form do |f|
     f.inputs do
-      f.input :amount, label: "Amount in cents"
+      f.input :amount, label: 'Amount in cents'
       f.input :next_charge_at, as: :datepicker,
                                datepicker_options: {
-                                min_date: Date.today + 1
+                                 min_date: Date.today + 1
                                }
       f.input :ended_at, as: :datepicker
-      f.input :cancelled_reason, :as => :select, required: true, collection: [
-        "Can't afford to donate", 
+      f.input :cancelled_reason, as: :select, required: true, collection: [
+        "Can't afford to donate",
         "Doesn't like Leadnow",
-        "Multiple donations",
-        "Other"
+        'Multiple donations',
+        'Other'
       ]
     end
     f.actions
   end
 
   show do
-    
-    panel "Recurring Donor Details" do
+    panel 'Recurring Donor Details' do
       attributes_table_for recurring_donor do
         row :amount
         row :last_charged_at
@@ -62,17 +61,21 @@ ActiveAdmin.register RecurringDonor do
     end
 
     panel 'Donor Transactions' do
-      table_for recurring_donor.donor.transactions do
-        column('Transaction ID') { |t| link_to(t.id, admin_transaction_path(t)) }
-        column('Charge Date') { |t| t.created_at.to_date }
-        column('Amount') { |t| number_to_currency(t.amount/100) }
-        column('Processor') { |t| t.processor.name }
-        column('Recurring?') { |t| t.recurring }
+      if recurring_donor&.donor&.transactions.blank?
+        'No transactions'
+      else
+        table_for recurring_donor.donor.transactions do
+          column('Transaction ID') { |t| link_to(t.id, admin_transaction_path(t)) }
+          column('Charge Date') { |t| t.created_at.to_date }
+          column('Amount') { |t| number_to_currency(t.amount / 100) }
+          column('Processor') { |t| t.processor.name }
+          column('Recurring?', &:recurring)
+        end
       end
     end
   end
 
-  sidebar "Donor Details", only: :show do
+  sidebar 'Donor Details', only: :show do
     attributes_table_for recurring_donor.donor do
       row('Email') { |d| d.metadata['email'] }
       row('Name') { |d| "#{d.metadata['first_name']} #{d.metadata['last_name']}" }
