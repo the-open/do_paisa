@@ -9,7 +9,6 @@ ActiveAdmin.register RecurringDonor do
   filter :processor
   filter :amount_eq, label: 'AMOUNT IN CENTS'
   filter :next_charge_at
-  filter :ended_at_null
 
   scope('Cancalled') { |scope| scope.where.not(ended_at: nil) }
   scope('Not Cancelled') { |scope| scope.where(ended_at: nil) }
