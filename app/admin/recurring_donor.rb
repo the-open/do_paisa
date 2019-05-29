@@ -68,7 +68,7 @@ ActiveAdmin.register RecurringDonor do
           column('Transaction ID') { |t| link_to(t.id, admin_transaction_path(t)) }
           column('Charge Date') { |t| t.created_at.to_date }
           column('Amount') { |t| number_to_currency(t.amount / 100) }
-          column('Processor') { |t| t.processor.name }
+          column('Processor') { |t| t.processor&.name }
           column('Recurring?', &:recurring)
         end
       end
