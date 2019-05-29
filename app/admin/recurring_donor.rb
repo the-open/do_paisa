@@ -8,6 +8,7 @@ ActiveAdmin.register RecurringDonor do
   filter :donor_last_name_cont, label: 'DONOR LAST NAME', as: :string
   filter :processor
   filter :amount_eq, label: 'AMOUNT IN CENTS'
+  filter :next_charge_at
 
   index do
     column :id do |recurring_donor|
