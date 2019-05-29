@@ -8,6 +8,9 @@ class RecurringDonor < ApplicationRecord
   after_commit :notify_webhooks, if: :should_send_webhook?
   after_commit :notify_paypal_webhooks, if: :should_send_paypal_webhook?
 
+  scope :not_ended, -> { where(ended_at: nil) }
+  scope :next_charge_on_or_before_today, -> { where('next_charge_at <= ?', Date.current) }
+
   def charge
     process_params = {
       token: donor.external_id,
