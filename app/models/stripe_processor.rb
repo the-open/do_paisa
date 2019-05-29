@@ -31,6 +31,7 @@ class StripeProcessor < Processor
         charge_options
       )
     rescue Stripe::CardError => e
+      Rollbar.error(e)
       body = e.json_body
       err  = body[:error]
       return {
