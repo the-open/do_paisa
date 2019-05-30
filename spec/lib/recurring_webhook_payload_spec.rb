@@ -19,32 +19,36 @@ describe RecurringWebhookPayload do
     @recurring_donor = RecurringDonor.create!(donor: @donor, processor: @stripe_processor, amount: 4201)
 
     @expected_payload = {
-      api_token: "abcd1234", 
+      api_token: 'abcd1234',
       cons_hash: {
-        firstname: "Johnny", 
-        lastname: "Bravo", 
-        emails: [{ email: "test@example.com"}], 
+        firstname: 'Johnny',
+        lastname: 'Bravo',
+        emails: [{ email: 'test@example.com' }],
         addresses: [
-          { 
-            line1: nil, 
-            line2: nil, 
-            town: nil, 
-            state: nil, 
-            postcode: "HP5 3LR", 
-            country: "GB"
+          {
+            line1: nil,
+            line2: nil,
+            town: nil,
+            state: nil,
+            postcode: 'HP5 3LR',
+            country: 'GB'
           }
         ]
       },
-      medium: "do_paisa", 
+      medium: 'Test processor',
       external_id: @recurring_donor.id,
-      started_at: @recurring_donor.created_at, 
-      current_amount: 42.01
+      started_at: @recurring_donor.created_at,
+      current_amount: '42.01',
+      ended_at: nil,
+      source: '67',
+      updated_at: @recurring_donor.updated_at,
+      frequency: 'Monthly'
     }
     Rails.application.secrets.stub(:identity_api_token) { 'abcd1234' }
   end
 
   it 'Correctly generates an Identity Webhook' do
-    payload = RecurringWebhookPayload.new('identity', @recurring_donor).get_payload
+    payload = RecurringWebhookPayload.new('identity', @recurring_donor, @stripe_processor).get_payload
     expect(payload).to eq(@expected_payload)
   end
 end

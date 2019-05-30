@@ -39,32 +39,29 @@ describe WebhookPayload do
       postcode: 'HP5 3LR',
       country: 'GB',
       created_at: @transaction.created_at,
-      amount: 10.45,
+      amount: '10.45',
       card_brand: 'unknown',
       source: '187|act',
       source_system: 'act',
       source_external_id: '187',
-      api_token: 'abcd1234'
+      api_token: 'abcd1234',
+      status: 'approved',
+      medium: @stripe_processor.name
     }
     Rails.application.secrets.stub(:identity_api_token) { 'abcd1234' }
   end
 
   it 'Correctly generates an Identity Webhook' do
-    payload = WebhookPayload.new('identity', @transaction).get_payload
-
+    payload = WebhookPayload.new('identity', @transaction, @stripe_processor).get_payload
     expect(payload).to eq(@expected_payload)
   end
 
-  it 'Includes the correct recurring donation data' do 
+  it 'Includes the correct recurring donation data' do
     recurring_donor = RecurringDonor.create!(donor: @donor, processor: @stripe_processor, amount: 4201)
-    @transaction.update_attributes(recurring_donor: recurring_donor)
-
-    payload = WebhookPayload.new('identity', @transaction).get_payload
-
-    @expected_payload.merge!({
-      regular_donation_system: 'do_paisa',
-      regular_donation_external_id: recurring_donor.id
-    })
+    @transaction.update(recurring_donor: recurring_donor)
+    payload = WebhookPayload.new('identity', @transaction, @stripe_processor).get_payload
+    @expected_payload[:regular_donation_external_id] = recurring_donor.id
+    @expected_payload[:regular_donation_system] = @stripe_processor.name
 
     expect(payload).to eq(@expected_payload)
   end
