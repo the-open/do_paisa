@@ -1,28 +1,33 @@
 class NotificationMailer < ApplicationMailer
   before_action :set_vars
   default from: 'notifications@example.com'
- 
+
   def one_off_approved
+    return if @vars.blank?
     return unless template = @processor.processor_email_templates.find_by(email_type: 'one_off_approved')
     send_rendered(template, @vars)
   end
 
   def one_off_pending
+    return if @vars.blank?
     return unless template = @processor.processor_email_templates.find_by(email_type: 'one_off_pending')
     send_rendered(template, @vars)
   end
 
   def one_off_pending_rejected
+    return if @vars.blank?
     return unless template = @processor.processor_email_templates.find_by(email_type: 'one_off_pending_rejected')
     send_rendered(template, @vars)
   end
 
   def recurring_started
+    return if @vars.blank?
     return unless template = @processor.processor_email_templates.find_by(email_type: 'recurring_start')
     send_rendered(template, @vars)
   end
 
   def recurring_fail
+    return if @vars.blank?
     return unless template = @processor.processor_email_templates.find_by(email_type: 'recurring_fail')
     send_rendered(template, @vars)
   end
@@ -30,13 +35,17 @@ class NotificationMailer < ApplicationMailer
   private
 
   def set_vars
-    if params[:transaction].present?
-      @transaction = params[:transaction]
+    if params[:transaction_id].present?
+      @transaction = Transaction.find(params[:transaction_id])
+      return if @transaction.blank?
+
       @recurring_donor = @transaction.recurring_donor
       @donor = @transaction.donor
       @processor = @transaction.processor
-    else
-      @recurring_donor = params[:recurring_donor]
+    elsif params[:recurring_donor_id]
+      @recurring_donor = RecurringDonor.find(params[:recurring_donor_id])
+      return if @recurring_donor.blank?
+
       @donor = @recurring_donor.donor
       @processor = @recurring_donor.processor
     end

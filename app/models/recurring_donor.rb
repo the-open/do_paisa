@@ -23,7 +23,12 @@ class RecurringDonor < ApplicationRecord
       process_params[:order_description] = donor.metadata['email']
     end
     response = processor.process(process_params)
-    Rollbar.error(response) and return if response.nil?
+
+    if response.nil?
+      Rollbar.error(response)
+      return
+    end
+
     if response[:status] == 'approved'
       acknowledge_successful_transaction
     elsif response[:status] == 'rejected'
@@ -34,17 +39,17 @@ class RecurringDonor < ApplicationRecord
   end
 
   def should_send_webhook?
-    return if processor.type == "PaypalProcessor"
+    return if processor.type == 'PaypalProcessor'
     saved_change_to_id? || saved_change_to_ended_at?
   end
 
   def should_send_paypal_webhook?
-    return unless processor.type == "PaypalProcessor"
+    return unless processor.type == 'PaypalProcessor'
     saved_change_to_ended_at?
   end
 
   def acknowledge_successful_transaction
-    update_attributes!(
+    update!(
       last_charged_at: Date.today,
       next_charge_at: Date.today + 1.month,
       consecutive_fail_count: 0
@@ -53,13 +58,13 @@ class RecurringDonor < ApplicationRecord
 
   def acknowledge_failed_transaction(message)
     if consecutive_fail_count < 2
-      update_attributes!(
+      update!(
         next_charge_at: Date.tomorrow,
         consecutive_fail_count: consecutive_fail_count + 1,
         last_fail_reason: message
       )
     else
-      update_attributes!(
+      update!(
         next_charge_at: nil,
         ended_at: Time.now,
         consecutive_fail_count: consecutive_fail_count + 1,
@@ -74,7 +79,7 @@ class RecurringDonor < ApplicationRecord
     matcher = /Return:(\d*)/
     return_code = message.scan(matcher).first.first.to_i
     if codes.include?(return_code)
-      update_attributes!(
+      update!(
         next_charge_at: nil,
         ended_at: Time.now,
         last_fail_reason: message
@@ -88,22 +93,22 @@ class RecurringDonor < ApplicationRecord
   def notify_webhooks
     webhooks = OutgoingWebhook.where(processor_id: processor_id).or(OutgoingWebhook.where(processor_id: nil))
     webhooks.each do |webhook|
-      webhook.notify_recurring(self, self.processor)
+      webhook.notify_recurring(self, processor)
     end
   end
 
   def notify_paypal_webhooks
     webhooks = OutgoingWebhook.where(processor_id: processor_id).or(OutgoingWebhook.where(processor_id: nil))
     webhooks.each do |webhook|
-      webhook.notify_paypal(self, self.processor)
+      webhook.notify_paypal(self, processor)
     end
   end
 
   def notify_email
-    NotificationMailer.with(recurring_donor: self).recurring_started.deliver_later
+    NotificationMailer.with(recurring_donor_id: id).recurring_started.deliver_later
   end
 
   def post_to_slack(message)
-    Slack.new.post_message "Recurring #{self.processor.name} donation with id: #{self.id} from #{self.donor.metadata['email']} has failed: \n #{message}"
+    Slack.new.post_message "Recurring #{processor.name} donation with id: #{id} from #{donor.metadata['email']} has failed: \n #{message}"
   end
 end

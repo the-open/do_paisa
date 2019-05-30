@@ -8,14 +8,14 @@ class ProcessorEmailTemplate < ApplicationRecord
 
   def can_render?
     return unless html.present? && subject.present?
-    
+
     begin
       render_subject(first_name: "Test", last_name: "Ipop")
     rescue Mustache::Parser::SyntaxError => e
       errors.add(:subject, "Error in Subject template: #{e.message}")
     end
 
-    begin 
+    begin
       render_html(first_name: "Test", last_name: "Ipop")
     rescue Mustache::Parser::SyntaxError => e
       errors.add(:html, "Error in HTML template: #{e.message}")
