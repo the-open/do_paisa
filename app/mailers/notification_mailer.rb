@@ -70,13 +70,13 @@ class NotificationMailer < ApplicationMailer
     html = template.render_html(vars)
     from = "#{template.sender_name} <#{template.sender_email}>"
 
-    mail = mail(
-      to: @email, 
+    mail(
+      to: @email,
       subject: subject,
       body: html,
-      content_type: "text/html",
+      content_type: 'text/html',
       from: from
-      )
+    )
 
     DonorEmail.create!(donor: @donor, subject: subject, html: html, sender_name: template.sender_name, sender_email: template.sender_email)
   end
