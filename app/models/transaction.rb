@@ -23,7 +23,7 @@ class Transaction < ApplicationRecord
   end
 
   def notify_email_approved
-    NotificationMailer.with(transaction: self).one_off_approved.deliver_later(wait: 1.minute) unless recurring_donor
+    NotificationMailer.with(transaction: self).one_off_approved.deliver_later unless recurring_donor
     post_to_slack
   end
 
@@ -32,7 +32,7 @@ class Transaction < ApplicationRecord
   end
 
   def notify_email_pending
-    NotificationMailer.with(transaction: self).one_off_pending.deliver_later(wait: 1.minute) unless recurring_donor
+    NotificationMailer.with(transaction: self).one_off_pending.deliver_later unless recurring_donor
   end
 
   def should_send_email_rejected?
@@ -42,9 +42,9 @@ class Transaction < ApplicationRecord
 
   def notify_email_rejected
     if recurring_donor
-      NotificationMailer.with(transaction: self).recurring_fail.deliver_later(wait: 1.minute)
+      NotificationMailer.with(transaction: self).recurring_fail.deliver_later
     else
-      NotificationMailer.with(transaction: self).one_off_pending_rejected.deliver_later(wait: 1.minute)
+      NotificationMailer.with(transaction: self).one_off_pending_rejected.deliver_later
     end
   end
 
