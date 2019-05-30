@@ -42,6 +42,7 @@ gem 'rollbar'
 
 gem 'sidekiq'
 gem 'sidekiq-scheduler'
+gem 'sidekiq-failures'
 
 gem 'mustache'
 
