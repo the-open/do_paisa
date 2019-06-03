@@ -36,8 +36,11 @@ class NotificationMailer < ApplicationMailer
 
   def set_vars
     if params[:transaction_id].present?
-      @transaction = Transaction.find(params[:transaction_id])
-      return if @transaction.blank?
+      begin
+        @transaction = Transaction.find(params[:transaction_id])
+      rescue ActiveRecord::RecordNotFound
+        return nil
+      end
 
       @recurring_donor = @transaction.recurring_donor
       @donor = @transaction.donor
