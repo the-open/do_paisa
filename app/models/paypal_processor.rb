@@ -3,58 +3,15 @@
 class PaypalProcessor < Processor
   def process(options)
     donor = Donor.where(external_id: options[:token]).take!
+    return if donor.blank?
 
-    extra_config = JSON.parse(config)
+    client = paypal_client
 
-    PayPal::SDK.configure(
-      mode: 'live',
-      username: api_key,
-      password: api_secret,
-      signature: extra_config['signature'],
-      subject: extra_config['subject']
-    )
+    response = client.do_reference_transaction(charge_params(client, options))
 
-    client = PayPal::SDK::Merchant.new
+    return error_response(response.errors) if response.errors.any?
 
-    charge_params = client.build_do_reference_transaction(
-      DoReferenceTransactionRequestDetails: {
-        ReferenceID: donor.external_id,
-        PaymentAction: 'Sale',
-        PaymentDetails: {
-          OrderTotal: {
-            currencyID: currency,
-            value: options[:amount].to_i / 100
-          },
-          Custom: options[:custom],
-          OrderDescription: options[:order_description]
-        }
-      }
-    )
-
-    response = client.do_reference_transaction(charge_params)
-
-    if response.errors.any?
-      Rollbar.error("#{response.errors[0].short_message} - #{response.errors[0].long_message}: #{donor.metadata}, #{donor.id}")
-      return {
-        status: 'rejected',
-        message: "#{response.errors[0].short_message} - #{response.errors[0].long_message}"
-      }
-    end
-
-    transaction_details = response.do_reference_transaction_response_details
-
-    transaction = Transaction.create!(
-      processor_id: id,
-      amount: transaction_details.amount.value * 100,
-      external_id: transaction_details.transaction_id,
-      status: 'approved',
-      data: response.to_hash.to_json,
-      donor: donor,
-      source_system: donor.source_system,
-      source_external_id: donor.source_external_id,
-      recurring: true,
-      recurring_donor_id: options[:recurring_donor_id]
-    )
+    transaction = create_transaction(response, options[:recurring_donor_id])
 
     {
       processor_transaction_id: transaction.external_id,
@@ -78,5 +35,71 @@ class PaypalProcessor < Processor
     add_recurring_donor(donor, amount, date)
 
     [true, donor]
+  end
+
+  private
+
+  def charge_params(client, options)
+    client.build_do_reference_transaction(
+      DoReferenceTransactionRequestDetails: {
+        ReferenceID: donor.external_id,
+        PaymentAction: 'Sale',
+        PaymentDetails: {
+          OrderTotal: {
+            currencyID: currency,
+            value: options[:amount].to_i / 100
+          },
+          Custom: options[:custom],
+          OrderDescription: options[:order_description]
+        }
+      }
+    )
+  end
+
+  def error_response(errors)
+    Rollbar.error("#{errors[0].short_message} - #{errors[0].long_message}: #{donor.metadata}, #{donor.id}")
+    {
+      status: 'rejected',
+      message: "#{errors[0].short_message} - #{errors[0].long_message}"
+    }
+  end
+
+  def create_transaction(response, recurring_donor_id)
+    transaction_details = response.do_reference_transaction_response_details
+
+    Transaction.create!(
+      processor_id: id,
+      amount: transaction_details.amount.value * 100,
+      external_id: transaction_details.transaction_id,
+      status: 'approved',
+      data: response.to_hash.to_json,
+      donor: donor,
+      source_system: donor.source_system,
+      source_external_id: donor.source_external_id,
+      recurring: true,
+      recurring_donor_id: recurring_donor_id
+    )
+  end
+
+  def paypal_client
+    configure_paypal_sdk
+    PayPal::SDK::Merchant.new
+  end
+
+  def configure_paypal_sdk
+    PayPal::SDK.configure(
+      mode: 'live',
+      username: api_key,
+      password: api_secret,
+      signature: parsed_config.dig('signature'),
+      subject: parsed_config.dig('subject')
+    )
+  end
+
+  def parsed_config
+    JSON.parse config
+  rescue JSON::ParserError => ex
+    Rollbar.error(ex)
+    {}
   end
 end
