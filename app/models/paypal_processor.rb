@@ -7,7 +7,7 @@ class PaypalProcessor < Processor
 
     client = paypal_client
 
-    response = client.do_reference_transaction(charge_params(client, options))
+    response = client.do_reference_transaction(charge_params(client, options, donor))
 
     return error_response(response.errors) if response.errors.any?
 
