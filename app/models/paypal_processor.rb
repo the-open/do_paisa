@@ -9,7 +9,7 @@ class PaypalProcessor < Processor
 
     response = client.do_reference_transaction(charge_params(client, options, donor))
 
-    return error_response(response.errors) if response.errors.any?
+    return error_response(response.errors, donor) if response.errors.any?
 
     transaction = create_transaction(response, options[:recurring_donor_id])
 
@@ -56,7 +56,7 @@ class PaypalProcessor < Processor
     )
   end
 
-  def error_response(errors)
+  def error_response(errors, donor)
     Rollbar.error("#{errors[0].short_message} - #{errors[0].long_message}: #{donor.metadata}, #{donor.id}")
     {
       status: 'rejected',
