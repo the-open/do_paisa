@@ -39,7 +39,7 @@ class PaypalProcessor < Processor
 
   private
 
-  def charge_params(client, options)
+  def charge_params(client, options, donor)
     client.build_do_reference_transaction(
       DoReferenceTransactionRequestDetails: {
         ReferenceID: donor.external_id,
