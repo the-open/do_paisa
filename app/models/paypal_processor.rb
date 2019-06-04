@@ -11,7 +11,7 @@ class PaypalProcessor < Processor
 
     return error_response(response.errors, donor) if response.errors.any?
 
-    transaction = create_transaction(response, options[:recurring_donor_id])
+    transaction = create_transaction(response, options[:recurring_donor_id], donor)
 
     {
       processor_transaction_id: transaction.external_id,
@@ -64,7 +64,7 @@ class PaypalProcessor < Processor
     }
   end
 
-  def create_transaction(response, recurring_donor_id)
+  def create_transaction(response, recurring_donor_id, donor)
     transaction_details = response.do_reference_transaction_response_details
 
     Transaction.create!(
