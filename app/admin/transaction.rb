@@ -17,7 +17,7 @@ ActiveAdmin.register Transaction do
     column :recurring_donor
     column :recurring
     column :donor do |transaction|
-      transaction&.donor&.metadata&.dig('email')
+      link_to transaction&.donor&.metadata&.dig('email'), admin_donor_path(transaction.donor) if transaction.donor
     end
     actions
   end
