@@ -10,7 +10,6 @@ class Transaction < ApplicationRecord
   after_commit :notify_email_approved, if: :should_send_email_approved?
   after_commit :notify_email_pending, if: :should_send_email_pending?
   after_commit :notify_email_rejected, if: :should_send_email_rejected?
-
   after_commit :notify_webhooks, if: :should_send_webhook?
 
   def should_send_webhook?

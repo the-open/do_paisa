@@ -5,13 +5,13 @@ ActiveAdmin.register Transaction do
   index do
     column :id do |transaction|
       link_to(transaction.id, admin_transaction_path(transaction))
-    end 
+    end
     column :processor
     column :external_id
     column :created_at
     column :updated_at
     column :amount do |amount|
-      number_to_currency(amount.amount/100)
+      number_to_currency(amount.amount / 100)
     end
     column :status
     column :recurring_donor
@@ -26,16 +26,16 @@ ActiveAdmin.register Transaction do
   filter :external_id_cont, label: 'EXTERNAL ID', as: :string
   filter :processor
   filter :amount_eq, label: 'AMOUNT IN CENTS'
-  filter :recurring
+  filter :recurring, as: :select, collection: [true, nil]
 
   member_action :refund_payment, method: :put do
     processor = Processor.find(resource.processor_id)
     processor.refund(resource.external_id)
-    redirect_to admin_transaction_path, notice: "Transaction has been refunded"
+    redirect_to admin_transaction_path, notice: 'Transaction has been refunded'
   end
-  action_item :refund, :only => [:show] , :if => proc {
-    transaction.status == 'approved' && transaction.processor.type != 'PaypalProcessor'
-    } do
-    link_to "Refund Transaction", refund_payment_admin_transaction_path(transaction), method: :put
+  action_item :refund, only: [:show], if: proc {
+                                            transaction.status == 'approved' && transaction.processor.type != 'PaypalProcessor'
+                                          } do
+    link_to 'Refund Transaction', refund_payment_admin_transaction_path(transaction), method: :put
   end
 end
