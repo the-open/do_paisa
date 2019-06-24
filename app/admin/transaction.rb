@@ -26,7 +26,7 @@ ActiveAdmin.register Transaction do
   filter :external_id_cont, label: 'EXTERNAL ID', as: :string
   filter :processor
   filter :amount_eq, label: 'AMOUNT IN CENTS'
-  filter :recurring, as: :select, collection: [true, nil]
+  filter :recurring, as: :select, collection: { "True" => true, "False" => nil }
 
   member_action :refund_payment, method: :put do
     processor = Processor.find(resource.processor_id)
