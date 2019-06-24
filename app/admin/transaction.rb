@@ -16,7 +16,9 @@ ActiveAdmin.register Transaction do
     column :status
     column :recurring_donor
     column :recurring
-    column :donor
+    column :donor do |transaction|
+      transaction&.donor&.metadata&.dig('email')
+    end
     actions
   end
 
