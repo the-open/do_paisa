@@ -37,16 +37,17 @@ class NotificationMailer < ApplicationMailer
   def find_transaction
     retries = 0
     begin
-      @transaction = Transaction.find(params[:transaction_id])
+      transaction = Transaction.find(params[:transaction_id])
     rescue ActiveRecord::RecordNotFound => ex
       if (retries += 1) < 5
         sleep(5)
         retry
       else
         Rollbar.error(ex)
-        return nil
+        transaction = nil
       end
     end
+    transaction
   end
 
   def set_vars
