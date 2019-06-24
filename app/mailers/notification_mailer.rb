@@ -38,7 +38,8 @@ class NotificationMailer < ApplicationMailer
     if params[:transaction_id].present?
       begin
         @transaction = Transaction.find(params[:transaction_id])
-      rescue ActiveRecord::RecordNotFound
+      rescue ActiveRecord::RecordNotFound => ex
+        Rollbar.error(ex)
         return nil
       end
 
