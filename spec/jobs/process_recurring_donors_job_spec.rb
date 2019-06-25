@@ -5,6 +5,8 @@ RSpec.describe ProcessRecurringDonorsJob, type: :job do
   before do
     @stripe_processor = FactoryBot.create(:stripe_processor_with_donor)
     @donor = @stripe_processor.donors.first
+    next if RSpec.current_example.metadata[:skip_before]
+
     @today_donor = RecurringDonor.create!(
       donor: @donor,
       last_charged_at: 1.month.ago,
@@ -14,7 +16,21 @@ RSpec.describe ProcessRecurringDonorsJob, type: :job do
     )
   end
 
-  it 'Should charge only the people whose day it is' do
+  it 'Should not charge the people whose day it is not', skip_before: true do
+    @tomorrow_donor = RecurringDonor.create!(
+      donor: @donor,
+      last_charged_at: 1.month.ago,
+      next_charge_at: Date.tomorrow,
+      processor: @stripe_processor,
+      amount: 1000
+    )
+
+    expect_any_instance_of(StripeProcessor).not_to receive(:process)
+
+    perform_enqueued_jobs { ProcessRecurringDonorsJob.perform_later }
+  end
+
+  it 'Should charge the people whose day is before today', skip_before: true do
     @yesterday_donor = RecurringDonor.create!(
       donor: @donor,
       last_charged_at: 1.month.ago,
@@ -22,16 +38,13 @@ RSpec.describe ProcessRecurringDonorsJob, type: :job do
       processor: @stripe_processor,
       amount: 1000
     )
-    @tomorrow_donor = RecurringDonor.create!(
-      donor: @donor,
-      last_charged_at: 1.month.ago,
-      next_charge_at: Date.yesterday,
-      processor: @stripe_processor,
-      amount: 1000
-    )
+    expect_any_instance_of(StripeProcessor).to receive(:process).with(hash_including(recurring_donor_id: @yesterday_donor.id)).and_return(status: 'approved')
+
+    perform_enqueued_jobs { ProcessRecurringDonorsJob.perform_later }
+  end
+
+  it 'Should charge the people whose day is on today' do
     expect_any_instance_of(StripeProcessor).to receive(:process).with(hash_including(recurring_donor_id: @today_donor.id)).and_return(status: 'approved')
-    expect_any_instance_of(StripeProcessor).not_to receive(:process).with(hash_including(recurring_donor_id: @yesterday_donor.id))
-    expect_any_instance_of(StripeProcessor).not_to receive(:process).with(hash_including(recurring_donor_id: @tomorrow_donor.id))
 
     perform_enqueued_jobs { ProcessRecurringDonorsJob.perform_later }
   end
