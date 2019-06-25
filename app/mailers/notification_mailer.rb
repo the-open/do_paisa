@@ -1,6 +1,15 @@
 class NotificationMailer < ApplicationMailer
-  before_action :set_vars
   default from: 'notifications@example.com'
+  before_action :set_vars
+
+  rescue_from ActiveRecord::RecordNotFound do |exception|
+    if params.dig(:retries).to_i > 3
+      Rollbar.error(exception)
+    else
+      params[:retries] = (params.dig(:retries) || 0) + 1
+      NotificationMailer.with(params).send(action_name).deliver_later(wait: 3.minutes)
+    end
+  end
 
   def one_off_approved
     return if @vars.blank?
@@ -34,25 +43,9 @@ class NotificationMailer < ApplicationMailer
 
   private
 
-  def find_transaction
-    retries = 0
-    begin
-      transaction = Transaction.find(params[:transaction_id])
-    rescue ActiveRecord::RecordNotFound => ex
-      if (retries += 1) < 5
-        sleep(5)
-        retry
-      else
-        Rollbar.error(ex)
-        transaction = nil
-      end
-    end
-    transaction
-  end
-
   def set_vars
     if params[:transaction_id].present?
-      return unless @transaction = find_transaction
+      return unless @transaction = Transaction.find(params[:transaction_id])
 
       @recurring_donor = @transaction.recurring_donor
       @donor = @transaction.donor
