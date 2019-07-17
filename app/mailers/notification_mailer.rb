@@ -7,7 +7,7 @@ class NotificationMailer < ApplicationMailer
       Rollbar.error(exception)
     else
       params[:retries] = params.dig(:retries).to_i + 1
-      NotificationMailer.with(params).send(action_name).deliver_later(wait: 3.minutes)
+      NotificationMailer.with(params).send(action_name).deliver_later(wait: 5.minutes)
     end
   end
 

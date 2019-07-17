@@ -105,7 +105,7 @@ class RecurringDonor < ApplicationRecord
   end
 
   def notify_email
-    NotificationMailer.with(recurring_donor_id: id).recurring_started.deliver_later
+    NotificationMailer.with(recurring_donor_id: id).recurring_started.deliver_later(wait: 5.minutes)
   end
 
   def post_to_slack(message)
