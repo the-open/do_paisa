@@ -317,8 +317,10 @@
       cardNumber.addEventListener('change', function(event) {
         var displayError = document.getElementById('card-errors');
         if (event.error) {
+          parent.postMessage("card number error","*");
           displayError.textContent = event.error.message;
         } else {
+          parent.postMessage("card number valid","*");
           displayError.textContent = '';
         }
       });
@@ -326,8 +328,10 @@
       cardExpiry.addEventListener('change', function(event) {
         var displayError = document.getElementById('card-errors');
         if (event.error) {
+          parent.postMessage("card exp error","*");
           displayError.textContent = event.error.message;
         } else {
+          parent.postMessage("card exp valid","*");
           displayError.textContent = '';
         }
       });
@@ -335,8 +339,10 @@
       cardCvc.addEventListener('change', function(event) {
         var displayError = document.getElementById('card-errors');
         if (event.error) {
+          parent.postMessage("card cvc error","*");
           displayError.textContent = event.error.message;
         } else {
+          parent.postMessage("card cvc valid","*");
           displayError.textContent = '';
         }
       });
