@@ -362,6 +362,7 @@
           if (result.error) {
             var errorElement = document.getElementById('card-errors');
             errorElement.textContent = result.error.message;
+            parent.postMessage("card details error", "*");
           } else {
             saveTokenAndChargeCard(result.token, donationAmount, metadata, source, key, recurring, date);
           }
