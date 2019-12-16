@@ -39,6 +39,8 @@ class StripeProcessor < Processor
         # Using string interpolation to avoid "no implicit conversion of nil into String" errors if one of these values is nil.
         message: "#{err[:code]}, Decline Code: #{err[:decline_code]}"
       }
+    rescue Stripe::StripeError => e
+      Rollbar.error(e)
     end
 
     transaction = Transaction.new(
