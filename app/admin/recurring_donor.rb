@@ -39,8 +39,9 @@ ActiveAdmin.register RecurringDonor do
       f.input :cancelled_reason, as: :select, required: true, collection: [
         "Can't afford to donate",
         "Doesn't like Leadnow",
-        'Multiple donations',
-        'Other'
+        "Multiple donations",
+        "Accidental Monthly Donation",
+        "Other"
       ]
     end
     f.actions
