@@ -374,6 +374,9 @@
         if (data.action === "submit") {
           registerElements([cardNumber, cardExpiry, cardCvc], data.donationAmount, data.metadata, data.source, data.idempotency_key, data.recurring, data.date);
         }
+        else if (data.action === "focus") {
+          cardNumber.focus();
+        }
       }, false);
     </script>
   </body>

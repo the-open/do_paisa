@@ -131,7 +131,7 @@
             <label for="account-number" class="placeholder-label">
               Account Number <i data-toggle="popover" class="far fa-question-circle" id="account-icon"></i>
             </label>
-            <input type="text" class="card-info" id="account-number"</input>
+            <input type="text" class="card-info" id="account-number"></input>
           </div>
           <div class="form-group one-third">
             <select class="select" id="account-type">
@@ -245,6 +245,9 @@
           data.metadata["account_number"] = accountNum;
           data.metadata["account_type"] = accountType.val();
           saveTokenAndChargeCard(data.metadata, data.source, data.donationAmount, data.recurring, data.date);
+        }
+        else if (data.action === "focus") {
+          $("#account-number").focus();
         }
       }, false);
     </script>
