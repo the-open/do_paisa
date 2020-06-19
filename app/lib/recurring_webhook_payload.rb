@@ -54,6 +54,7 @@ class RecurringWebhookPayload
       payload.merge!({
         source: @recurring_donor.donor.metadata['po_guid']
       })
+      payload[:started_at] = DateTime.parse("#{@recurring_donor.next_charge_at} 16:00:00")
     end
 
     ended_reason = @recurring_donor.last_fail_reason.present? ? @recurring_donor.last_fail_reason : @recurring_donor.cancelled_reason

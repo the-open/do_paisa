@@ -29,6 +29,7 @@ ActiveAdmin.register Transaction do
   filter :processor
   filter :amount_eq, label: 'AMOUNT IN CENTS'
   filter :recurring
+  filter :status, as: :select
 
   member_action :refund_payment, method: :put do
     processor = Processor.find(resource.processor_id)

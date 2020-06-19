@@ -29,7 +29,9 @@ class RecurringDonor < ApplicationRecord
       return
     end
 
-    if response[:status] == 'approved'
+    if response[:status] == 'pending'
+      acknowledge_pending_transaction
+    elsif response[:status] == 'approved'
       acknowledge_successful_transaction
     elsif response[:status] == 'rejected'
       acknowledge_failed_transaction(response[:message])
@@ -46,6 +48,13 @@ class RecurringDonor < ApplicationRecord
   def should_send_paypal_webhook?
     return unless processor.type == 'PaypalProcessor'
     saved_change_to_ended_at?
+  end
+
+  def acknowledge_pending_transaction
+    update!(
+      last_charged_at: Date.today,
+      next_charge_at: Date.today + 1.month,
+    )
   end
 
   def acknowledge_successful_transaction

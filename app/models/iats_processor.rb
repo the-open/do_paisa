@@ -58,7 +58,7 @@ class IatsProcessor < Processor
     {
       processor_transaction_id: response[:transaction_id],
       transaction_id: transaction.id,
-      status: 'approved',
+      status: transaction.status,
       amount: transaction.amount,
       donor_id: donor.id,
       recurring: transaction.recurring
