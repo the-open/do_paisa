@@ -62,9 +62,13 @@ class WebhookPayload
     end
 
     if @transaction.recurring_donor_id
-      payload.merge!({ 
+      payload.merge!({
         regular_donation_system: @processor.name,
-        regular_donation_external_id: @transaction.recurring_donor_id
+        regular_donation_external_id: @transaction.recurring_donor_id,
+        regular_donation_frequency: 'Monthly',
+        regular_donation_started_at: @transaction.created_at,
+        regular_donation_ended_at: @transaction.recurring_donor.ended_at,
+        regular_donation_source: @transaction.source_external_id
       })
     end
 

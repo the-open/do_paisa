@@ -42,7 +42,7 @@ class RecurringDonor < ApplicationRecord
 
   def should_send_webhook?
     return if processor.type == 'PaypalProcessor'
-    saved_change_to_id? || saved_change_to_ended_at?
+    (self.donor.metadata['po_guid'].present? && saved_change_to_id?) || saved_change_to_ended_at?
   end
 
   def should_send_paypal_webhook?
