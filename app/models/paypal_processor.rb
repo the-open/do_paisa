@@ -92,7 +92,8 @@ class PaypalProcessor < Processor
       username: api_key,
       password: api_secret,
       signature: parsed_config.dig('signature'),
-      subject: parsed_config.dig('subject')
+      subject: parsed_config.dig('subject'),
+      ssl_options: { ca_file: nil }
     )
   end
 
