@@ -14,6 +14,8 @@
       href="https://use.fontawesome.com/releases/v5.0.9/css/all.css" 
       integrity="sha384-5SOiIsAziJl6AWe0HWRKTXlfcSHKmYV4RBF18PPJ173Kzn7jzMyFuTtk8JA7QQG1" 
       crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
     <style>
       body {
         margin: 0;
@@ -52,7 +54,7 @@
         width: 100%;
         left: 7px;
         bottom: 8px;
-        color: #333;
+        color: #555;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -61,6 +63,7 @@
         transition-property: color, transform;
         transition-duration: 0.3s;
         transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+        font-family: Montserrat
       }
 
       .input {
@@ -119,11 +122,14 @@
         color: #aab7c4;
         transform: scale(0.70) translateY(-25px);
         cursor: default;
+        font-weight: 900;
       }
 
       .input.focused + label {
-        color: #45b29d;
+        color: #555;
+        font-weight: 900;
       }
+
       .input.focused + label > i{
         display: none;
       }
@@ -136,7 +142,7 @@
       }
 
       .input.focused + label + .baseline {
-        background-color: #45b29d;
+        background-color: #555;
       }
 
       .input.focused.invalid + label + .baseline {
