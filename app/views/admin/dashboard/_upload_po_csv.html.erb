@@ -1,0 +1,4 @@
+<%= form_tag admin_dashboard_upload_po_csv_path, multipart: true do %>
+  <%= text_field_tag 'file'%>
+  <%= submit_tag 'Import Csv' %>
+<% end %>

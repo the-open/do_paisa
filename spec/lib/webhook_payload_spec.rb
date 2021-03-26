@@ -14,6 +14,10 @@ describe WebhookPayload do
         'last_name' => 'Bravo',
         'email' => 'test@example.com',
         'address_zip' => 'HP5 3LR',
+        'address_line1' => '2 Street ave',
+        'address_line2' => '',
+        'address_state' => 'AB',
+        'address_city' => 'Citiesville',
         'address_country' => 'GB'
       }
     )
@@ -36,7 +40,11 @@ describe WebhookPayload do
       email: 'test@example.com',
       first_name: 'Johnny',
       last_name: 'Bravo',
+      line1: '2 Street ave',
+      line2: '',
       postcode: 'HP5 3LR',
+      state: 'AB',
+      town: 'Citiesville',
       country: 'GB',
       created_at: @transaction.created_at,
       amount: '10.45',
@@ -62,7 +70,10 @@ describe WebhookPayload do
     payload = WebhookPayload.new('identity', @transaction, @stripe_processor).get_payload
     @expected_payload[:regular_donation_external_id] = recurring_donor.id
     @expected_payload[:regular_donation_system] = @stripe_processor.name
-
+    @expected_payload[:regular_donation_ended_at] = recurring_donor.ended_at
+    @expected_payload[:regular_donation_started_at] = @transaction.created_at
+    @expected_payload[:regular_donation_frequency] = 'Monthly'
+    @expected_payload[:regular_donation_source] = @transaction.source_external_id
     expect(payload).to eq(@expected_payload)
   end
 end

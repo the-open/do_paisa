@@ -87,7 +87,7 @@ class StripeProcessor < Processor
   end
 
   def add_donor(token, metadata = {}, source)
-    metadata = metadata.permit!.to_hash unless metadata.empty?
+    metadata = metadata.permit!.to_hash unless (metadata.is_a?(Hash) || metadata.empty?)
     customer_params = {
       source: token,
       email: metadata['email'],

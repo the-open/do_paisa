@@ -7,22 +7,6 @@ ActiveAdmin.register Donor do
   filter :external_id_cont, label: 'EXTERNAL ID', as: :string
   filter :created_at
 
-  collection_action :download_csv, :method => :get do
-    redirect_to action: :download_csv
-  end
-
-  action_item only: :index do
-    link_to 'Donor CC Details', download_csv_admin_donors_path
-  end
-
-  controller do
-    def download_csv
-      respond_to do |format|
-        format.html { send_data Donor.to_csv, filename: "donors-cc-info-#{Date.today}.csv" }
-      end
-    end
-  end
-
   index do
     column :id do |donor|
       link_to(donor.id, admin_donor_path(donor))

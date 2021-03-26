@@ -35,7 +35,7 @@ describe RecurringWebhookPayload do
           }
         ]
       },
-      medium: 'Test processor',
+      medium: ENV['STRIPE_PROCESSOR_NAME'],
       external_id: @recurring_donor.id,
       started_at: @recurring_donor.created_at,
       current_amount: '42.01',

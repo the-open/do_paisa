@@ -19,7 +19,7 @@ describe RecurringDonor do
 
   context "Webhook integration" do 
     it "triggers a webhook to the processor's recurring_url URL" do 
-      stripe_processor = FactoryBot.create(:stripe_processor_with_donor)
+      stripe_processor = FactoryBot.create(:stripe_processor_with_po_donor)
       stripe_processor.outgoing_webhooks << OutgoingWebhook.create!(system: 'identity', recurring_url: 'https://test.example.com/recurring_webhook')
 
       stubs = Faraday::Adapter::Test::Stubs.new do |stub|

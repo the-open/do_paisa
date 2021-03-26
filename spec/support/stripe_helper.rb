@@ -7,6 +7,6 @@ def get_stripe_token
       :cvc => "314"
     }
   },
-  { api_key: ENV['STRIPE_TEST_SECRET_KEY'] }
+  { api_key: ENV['STRIPE_SECRET_KEY'] }
   )
 end

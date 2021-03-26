@@ -3,7 +3,7 @@ require File.join(Rails.root, 'spec', 'support', 'stripe_helper')
 describe StripeProcessor do
   before do
     @stripe_processor = FactoryBot.create(:stripe_processor)
-    @stripe_processor.update(api_secret: ENV['STRIPE_TEST_SECRET_KEY'])
+    @stripe_processor.update(api_secret: ENV['STRIPE_SECRET_KEY'])
   end
 
   describe '#process' do
