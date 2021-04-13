@@ -47,7 +47,8 @@ class PODonationDataProcessor
 
   def create_donation(payload)
     po_guid = "PO-#{payload['ReferenceNumber']}"
-    existing_donor = Donor.find_by("metadata->>'po_guid' = ?", po_guid)
+    email = payload['Email']
+    existing_donor = Donor.where("metadata->>'po_guid' = ?", po_guid).where("metadata->>'email' = ?", email).first
 
     raise "Donor with PO GUID #{po_guid} already exists: #{existing_donor}" if existing_donor
 
