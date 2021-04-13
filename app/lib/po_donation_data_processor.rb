@@ -46,6 +46,11 @@ class PODonationDataProcessor
   end
 
   def create_donation(payload)
+    po_guid = "PO-#{payload['ReferenceNumber']}"
+    existing_donor = Donor.find_by("metadata->>'po_guid' = ?", po_guid)
+
+    raise "Donor with PO GUID #{po_guid} already exists: #{existing_donor}" if existing_donor
+
     case payload['PaymentMethod']
     when 'V', 'M'
       payload = create_stripe_token(payload)
@@ -71,7 +76,13 @@ class PODonationDataProcessor
   def create_stripe_token(payload)
     processor = StripeProcessor.find_by(name: ENV['STRIPE_PROCESSOR_NAME'])
     Stripe.api_key = processor.api_secret
-    #TODO: raise error if ccexpiry, cardno not in payload
+    required_keys = DEFAULT_REQUIRED_KEYS + %w[CARDNO CCExpiry]
+    validate_required_keys!(required: required_keys, params: payload)
+
+    unless payload['CARDNO'].present? && payload['CCExpiry'].present?
+      raise "PO Import: payload incomplete, missing credit card info. Provided payload was: #{payload}"
+    end
+
     exp_date = payload['CCExpiry']
     exp_month = exp_date.partition('/').first
     exp_year = exp_date.partition('/').last
@@ -103,7 +114,7 @@ class PODonationDataProcessor
         last_name: payload['LastName'],
         email: payload['Email'],
         phone: payload['Phone'],
-        po_guid: payload['ReferenceNumber']
+        po_guid: "PO-#{payload['ReferenceNumber']}"
       },
       source: {
         "system" => "PO CSV Upload",
@@ -127,7 +138,14 @@ class PODonationDataProcessor
   end
 
   def parse_iats_payload(payload)
-    #TODO: raise error if bankins, banktransit, bankaccount not in payload
+    required_keys = DEFAULT_REQUIRED_KEYS + %w[BankINS BankTransit BankAccount]
+    validate_required_keys!(required: required_keys, params: payload)
+
+    unless payload['BankINS'].present? && payload['BankTransit'].present? && payload['BankAccount']
+      raise "PO Import: payload incomplete, missing account info. Provided payload was: #{payload}"
+    end
+
+
     parsed_payload = {
       metadata: {
         address_line1: payload['StreetAddress'],
@@ -138,7 +156,7 @@ class PODonationDataProcessor
         last_name: payload['LastName'],
         email: payload['Email'],
         phone: payload['Phone'],
-        po_guid: payload['ReferenceNumber'],
+        po_guid: "PO-#{payload['ReferenceNumber']}",
         account_number: payload['BankINS'] + payload['BankTransit'] + payload['BankAccount'],
         account_type: 'CHECKING'
       },

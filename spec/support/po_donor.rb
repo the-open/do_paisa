@@ -40,6 +40,27 @@ module PODonationPayloads
     }
   end
 
+  def debit_incomplete
+    {
+      'ReferenceNumber' => 'r2df2481-snmt-1afc-16e2-1k2fp19ueq3cg',
+      'FirstName' => 'Heather',
+      'LastName' => 'Smith',
+      'StreetAddress' => '1101 Bloor St W',
+      'City' => 'Toronto',
+      'Province' => 'ON',
+      'PostalCode' => 'M6H 1M7',
+      'Phone' => '',
+      'Email' => 'heather@example.ca',
+      'BankINS' => '',
+      'BankTransit' => '',
+      'BankAccount' => '',
+      'PaymentMethod' => 'C',
+      'GiftType' => 'PAC',
+      'OTGAmount' => '1',
+      'PACStartDate' => (DateTime.now + 15.days).strftime("%d/%m/%Y")
+    }
+  end
+
   def credit_otg
     {
       'ReferenceNumber' => 'r2df2481-snmt-1afc-16e2-1k2fp19ueq3cg',
@@ -79,9 +100,49 @@ module PODonationPayloads
     }
   end
 
+  def credit_incomplete
+    {
+      'ReferenceNumber' => 'r2df2481-snmt-1afc-16e2-1k2fp19ueq3cg',
+      'FirstName' => 'Heather',
+      'LastName' => 'Smith',
+      'StreetAddress' => '1101 Bloor St W',
+      'City' => 'Toronto',
+      'Province' => 'ON',
+      'PostalCode' => 'M6H 1M7',
+      'Phone' => '',
+      'Email' => 'heather@example.ca',
+      'CARDNO' => '',
+      'CCExpiry' => '',
+      'PaymentMethod' => 'M',
+      'GiftType' => 'PAC',
+      'OTGAmount' => '5',
+      'PACStartDate' => (DateTime.now + 15.days).strftime("%d/%m/%Y")
+    }
+  end
+
   def upgrade
     {
       'ReferenceNumber' => 'r2df2481-snmt-1afc-16e2-1k2fp19ueq3cg',
+      'FirstName' => 'Heather',
+      'LastName' => 'Smith',
+      'StreetAddress' => '1101 Bloor St W',
+      'City' => 'Toronto',
+      'Province' => 'ON',
+      'PostalCode' => 'M6H 1M7',
+      'Phone' => '',
+      'Email' => 'heather@example.ca',
+      'CARDNO' => '4242424242424242',
+      'CCExpiry' => '10/2030',
+      'PaymentMethod' => 'M',
+      'GiftType' => 'UPG',
+      'TotalAmount' => '10',
+      'PACStartDate' => (DateTime.now + 15.days).strftime("%d/%m/%Y")
+    }
+  end
+
+  def upgrade_new
+    {
+      'ReferenceNumber' => '333b7bfc-977f-4caa-9af4-bd609ad4de4f',
       'FirstName' => 'Heather',
       'LastName' => 'Smith',
       'StreetAddress' => '1101 Bloor St W',

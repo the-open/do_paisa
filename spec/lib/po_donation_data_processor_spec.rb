@@ -12,6 +12,16 @@ RSpec.describe PODonationDataProcessor do
       @po_processor = PODonationDataProcessor.new
     end
 
+    context 'duplicate imports' do
+      it 'raises an exception' do
+        payload_one = debit_otg()
+        result = @po_processor.process(payload_one)
+
+        payload_two = debit_otg()
+        expect { described_class.new.process(payload_two) }.to raise_error RuntimeError
+      end
+    end
+
     context 'creates OTGs' do
       it 'creates a debit OTG' do
         payload = debit_otg()
@@ -43,6 +53,20 @@ RSpec.describe PODonationDataProcessor do
     end
 
     context 'creates recurring donations' do
+      context 'with an incomplete debit payload' do
+        it 'raises an exception' do
+          payload = debit_incomplete()
+          expect { described_class.new.process(payload) }.to raise_error RuntimeError
+        end
+      end
+
+      context 'with an incomplete credit payload' do
+        it 'raises an exception' do
+          payload = credit_incomplete()
+          expect { described_class.new.process(payload) }.to raise_error RuntimeError
+        end
+      end
+
       it 'creates a debit recurring donation' do
         payload = debit_recurring()
 
@@ -95,7 +119,7 @@ RSpec.describe PODonationDataProcessor do
 
         result = @po_processor.process(payload)
 
-        payload = upgrade()
+        payload = upgrade_new()
 
         result = @po_processor.process(payload)
 
